@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">   </script>
+</head>
+<body>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">列表</h3>
+        </div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <th>name</th>
+                    <th>age</th>
+                </tr>
+                <tr th:each="person:${singlePerson}">
+                    <td th:text="${person.name}"></td>
+                    <td th:text="${person.age}"></td>
+                </tr>
+                <tr th:each="person:${people}">
+                    <td th:text="${person.name}"></td>
+                    <td th:text="${person.age}"></td>
+                </tr>
+            </table>
+
+            <ul class="list-group">
+                <li class="list-group-item" th:each="person:${people}">
+                    <span th:text="${person.name}"></span>
+                    <span th:text="${person.age}"></span>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+
+
+</body>
+</html>
