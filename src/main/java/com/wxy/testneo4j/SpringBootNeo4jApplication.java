@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 
 @Controller
@@ -24,6 +25,17 @@ import java.util.Map;
 public class SpringBootNeo4jApplication {
     private final static Logger log = LoggerFactory.getLogger(SpringBootNeo4jApplication.class);
     UserService userService;
+    DeviceService deviceService;
+
+    public DeviceService getDeviceService() {
+        return deviceService;
+    }
+
+    @Autowired
+    public void setDeviceService(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
+
 
     public UserService getUserService() {
         return userService;
@@ -61,11 +73,12 @@ public class SpringBootNeo4jApplication {
     @Bean
     CommandLineRunner demo(){
         return args -> {
-            User user = new User();
-            user.setAge(25);
-            user.setName("aaabbb");
-            userService.saveOrUpdate(user);
-            log.info(user.toString());
+
+          //  User user = new User();
+           // user.setAge(25);
+            //user.setName("aaabbb");
+           // userService.saveOrUpdate(user);
+            //log.info(user.toString());
             log.info("demo started -----------------------------------------------!!!");
 
             List<User> userList= userService.getUserList();
@@ -74,6 +87,33 @@ public class SpringBootNeo4jApplication {
         };
     }
 
+    @Bean
+    CommandLineRunner testDevice(){
+        return args -> {
+          deviceService.deleteAll();
+          for(long i = 0;i<30;i++)
+          {
+              Device device = new Device();
+              device.setProduceTime(new Date());
+              device.setDevAddr(i);
+              if(i==0)
+                device.setType(0);
+              else
+                  device.setType(1);
+
+              Device device1 = deviceService.saveDevice(device);
+              if (device1 != null) {
+                  log.info("insert device");
+                  log.info(device1.toString());
+              }
+          }
+          for(long i=1;i<30;i++)
+          {
+              deviceService.gwAddNode(0,i);
+          }
+
+        };
+    }
 
 
 
