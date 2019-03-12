@@ -6,9 +6,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @NodeEntity
 public class User {
     @GraphId
-    Long Id;
-
-
+    private Long Id;
     private String name;
     private int age;
 
@@ -23,7 +21,14 @@ public class User {
     public User() {
     }
 
+    public User(Long id, String name, int age) {
+        Id = id;
+        this.name = name;
+        this.age = age;
+    }
+
     public User(String name, int age) {
+        Id = Long.valueOf(1);
         this.name = name;
         this.age = age;
     }
@@ -42,5 +47,14 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "Id=" + Id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

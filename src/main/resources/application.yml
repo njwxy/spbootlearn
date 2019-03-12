@@ -3,3 +3,10 @@ server:
 spring:
   thymeleaf:
     mode: LEGACYHTML5
+  data:
+    neo4j:
+      uri: http://tx.njqiteng.club:7474
+      username: neo4j
+      password: 12345678
+
+
