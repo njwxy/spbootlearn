@@ -22,7 +22,7 @@ public class Device {
     private Date produceTime;
 
 
-    float temperature;
+
 
     public Device() {
     }
@@ -66,13 +66,6 @@ public class Device {
         this.produceTime = produceTime;
     }
 
-    public float getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(float temperature) {
-        this.temperature = temperature;
-    }
 
 
     @Override
@@ -82,7 +75,6 @@ public class Device {
                 ", devAddr=" + devAddr +
                 ", type=" + type +
                 ", produceTime=" + produceTime +
-                ", temperature=" + temperature +
                 '}';
     }
 }
