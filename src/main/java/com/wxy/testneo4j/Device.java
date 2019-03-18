@@ -27,6 +27,13 @@ public class Device {
     public Device() {
     }
 
+    public Device(Long id, Long devAddr, int type, Date produceTime) {
+        this.id = id;
+        this.devAddr = devAddr;
+        this.type = type;
+        this.produceTime = produceTime;
+    }
+
     public Long getId() {
         return id;
     }
