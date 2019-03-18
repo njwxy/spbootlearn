@@ -3,9 +3,10 @@ package com.wxy.testneo4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DeviceService {
-
 
     private DeviceReporsitory deviceReporsitory;
 
@@ -31,4 +32,7 @@ public class DeviceService {
     public void gwAddNode(long gwAddr,long nodeAddr){
         deviceReporsitory.gwAddNode(gwAddr,nodeAddr);
     }
+
+    public List getDevices(long gwAddr){return deviceReporsitory.getDeviceList(gwAddr);};
+
 }

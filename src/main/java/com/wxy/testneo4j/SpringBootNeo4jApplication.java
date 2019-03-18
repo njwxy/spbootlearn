@@ -87,31 +87,52 @@ public class SpringBootNeo4jApplication {
         };
     }
 
+    void addGroupDevices(long gwAddr,long nodeAddr,int num)
+    {
+        Device device = new Device();
+        device.setDevAddr(gwAddr);
+        device.setType(0);
+
+        Device device1 = deviceService.saveDevice(device);
+        if(device1 ==null)
+        {
+            log.info("insert device"+gwAddr+"failed");
+            //return;
+        }
+
+        for(long i=0;i<num;i++)
+        {
+            long devnum= i+nodeAddr;
+            device = new Device();
+            device.setType(1);
+            device.setDevAddr(devnum);
+            device1 = deviceService.saveDevice(device);
+            if(device1 == null)
+            {
+
+                log.info("insert device"+devnum+"failed");
+            }
+
+                deviceService.gwAddNode(gwAddr,devnum);
+
+        }
+
+
+
+
+    }
+
     @Bean
     CommandLineRunner testDevice(){
         return args -> {
-          deviceService.deleteAll();
-          for(long i = 0;i<30;i++)
-          {
-              Device device = new Device();
-              device.setProduceTime(new Date());
-              device.setDevAddr(i);
-              if(i==0)
-                device.setType(0);
-              else
-                  device.setType(1);
-
-              Device device1 = deviceService.saveDevice(device);
-              if (device1 != null) {
-                  log.info("insert device");
-                  log.info(device1.toString());
-              }
-          }
-          for(long i=1;i<30;i++)
-          {
-              deviceService.gwAddNode(0,i);
-          }
-
+         // deviceService.deleteAll();
+        //  addGroupDevices(0,1,30);
+        //  addGroupDevices(100,101,30);
+            List lstDevice =  deviceService.getDevices(100);
+            for(int i=0;i<lstDevice.size();i++)
+            {
+                log.info(lstDevice.get(i).toString());
+            }
         };
     }
 

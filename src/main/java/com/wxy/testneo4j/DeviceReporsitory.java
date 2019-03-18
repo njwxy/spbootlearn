@@ -6,6 +6,8 @@ import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface DeviceReporsitory extends Neo4jRepository<Device,Long> {
 
     @Query("MATCH (d:Device) WHERE d.devAddr = {devAddr} RETURN d")
@@ -14,5 +16,7 @@ public interface DeviceReporsitory extends Neo4jRepository<Device,Long> {
     @Query ("MATCH (gw:Device) where gw.devAddr={gwAddr} MATCH (node:Device) where node.devAddr={nodeAddr} create (gw)-[:HAS]->(node)")
     void gwAddNode(@Param("gwAddr") long gwAddr,@Param("nodeAddr") long nodeAddr);
 
+    @Query("match (gw:Device)-[:HAS]->(node:Device) where gw.devAddr={gwAddr} return node")
+    List<Device> getDeviceList(@Param("gwAddr") long gwAddr);
 
 }
