@@ -1,5 +1,6 @@
 package com.wxy.testneo4j;
 
+import com.wxy.comm.NIOServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +137,14 @@ public class SpringBootNeo4jApplication {
         };
     }
 
-
+    @Bean
+    CommandLineRunner runNetty()
+    {
+        return args -> {
+        NIOServer nioServer = new NIOServer(null,12345);
+        nioServer.startServer();
+        };
+    }
 
 
     public static void main(String[] args){

@@ -103,5 +103,6 @@
     <orderEntry type="library" name="Maven: org.javolution:javolution:5.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.zeromq:jeromq:0.4.3" level="project" />
     <orderEntry type="library" name="Maven: org.zeromq:jnacl:0.1.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:5.0.0.Alpha1" level="project" />
   </component>
 </module>

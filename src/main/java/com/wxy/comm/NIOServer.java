@@ -24,11 +24,13 @@ public class NIOServer {
     private final NioEventLoopGroup acceptGroup;
     private final Bootstrap bootstrap ;
     private  Channel channel;
+    private  int port;
     public MessageHandler messageHandler = null;
 
 
     public NIOServer(MessageHandler messageHandler,int port) {
         this.messageHandler = messageHandler;
+        this.port = port;
         acceptGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         bootstrap.group(acceptGroup)
@@ -40,19 +42,23 @@ public class NIOServer {
                             pipeline.addLast(new ServerByteHandler(messageHandler));
                         }
                     });
-
-            try {
-                channel = bootstrap.bind("0.0.0.0",port).sync().channel();
-                System.out.println("UdpServer start success" + port);
-                channel.closeFuture().await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                acceptGroup.shutdownGracefully();
-            };
     }
+
+    public void startServer(){
+        try {
+            channel = bootstrap.bind("0.0.0.0",port).sync().channel();
+            System.out.println("UdpServer start success" + port);
+            channel.closeFuture().await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            acceptGroup.shutdownGracefully();
+        };
+    }
+
 
     public static void main(String args[]){
         NIOServer nioServer = new NIOServer(null,12345);
+        nioServer.startServer();
     }
 }
