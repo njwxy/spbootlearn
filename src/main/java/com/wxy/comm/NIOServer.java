@@ -1,5 +1,6 @@
 package com.wxy.comm;
 
+import com.wxy.test.PvMsgHandle;
 import com.wxy.testneo4j.SpringBootNeo4jApplication;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -43,7 +44,7 @@ public class NIOServer {
 
             try {
                 channel = bootstrap.bind("0.0.0.0",port).sync().channel();
-                System.out.println("UdpServer start success" + port);
+                log.info ("UdpServer start success" + port);
                 channel.closeFuture().await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -53,6 +54,6 @@ public class NIOServer {
     }
 
     public static void main(String args[]){
-        NIOServer nioServer = new NIOServer(null,12345);
+        NIOServer nioServer = new NIOServer(new PvMsgHandle(),12345);
     }
 }

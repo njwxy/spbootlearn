@@ -18,6 +18,17 @@ public class PrjFuncs {
             sb.append((char)(' '));
         }
         return sb.toString();
-
     }
+
+    public static byte getSum(byte[] data,int start,int length)
+    {
+        int ret = 0;
+        for(int i = 0;i<length;i++)
+        {
+            ret = ret + (int)(data[i+start]&0xff);
+        }
+        byte retb = (byte)((ret)&0xff);
+        return retb;
+    }
+
 }

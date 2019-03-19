@@ -22,7 +22,7 @@ import java.util.Date;
 
 @Controller
 @SpringBootApplication
-public class SpringBootNeo4jApplication {
+public class SpringBootNeo4jApplication implements CommandLineRunner{
     private final static Logger log = LoggerFactory.getLogger(SpringBootNeo4jApplication.class);
     UserService userService;
     DeviceService deviceService;
@@ -141,5 +141,10 @@ public class SpringBootNeo4jApplication {
 
     public static void main(String[] args){
         SpringApplication.run(SpringBootNeo4jApplication.class,args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+
     }
 }
