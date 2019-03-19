@@ -1,69 +1,34 @@
 package com.wxy.test;
 import javolution.io.Struct;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TestJavolution  {
 
-    public  static String Hex2Str(byte[] hexByteIn){
-        int len = hexByteIn.length;
-        String restult = new String();
-        for(int i =0;i<len;i++)
-        {
-            restult += String.format( "%02x ",hexByteIn[i] );
-        }
-        return restult;
-    }
+
 
     public static void main(String args[])
     {
-        NodeRptData nodeRptData = new NodeRptData();
-        nodeRptData.nodeAddr.set(0x1);
-        nodeRptData.nodeState.set((short) 0x1);
-        nodeRptData.voltage[0].set((short) 0x10);
-        nodeRptData.voltage[1].set((short) 18);
-        nodeRptData.temperature[0].set((short) 0x05);
-        nodeRptData.temperature[1].set((short) 0x06);
-        nodeRptData.temperature[2].set((short) 0x07);
-        nodeRptData.relayState.set((short) 1);
-        nodeRptData.signal[0].set((short) 0x80);
-        nodeRptData.signal[1].set((short) 0x10);
-        nodeRptData.signal[2].set((short) 0x11);
-        for(short i=0x19;i<0x19+6;i++)
-        {
-            nodeRptData.time[i-0x19].set(i);
-        }
-
-        byte [] dataout = new byte[20];
-       // nodeRptData.getByteBuffer().get(dataout,0,20);
-       // System.out.println(dataout.length);
-       // System.out.println(Hex2Str(dataout));
-        ByteBuffer nodeRptDataByteBuffer = nodeRptData.getByteBuffer();
-
-        nodeRptData.setTemperature("-112.3");
-        nodeRptDataByteBuffer.position(0);
-        nodeRptDataByteBuffer.get(dataout,0,20);
-        System.out.println(Hex2Str(dataout));
-
-        nodeRptData.setTemperature("112.35");
 
 
 
-        nodeRptData.setTemperature("-995.3");
-        nodeRptDataByteBuffer.position(0);
-        nodeRptDataByteBuffer.get(dataout,0,20);
-        System.out.println(Hex2Str(dataout));
-        nodeRptData.setTemperature("-2.3");
-        nodeRptDataByteBuffer.position(0);
-        nodeRptDataByteBuffer.get(dataout,0,20);
-        System.out.println(Hex2Str(dataout));
-
-        nodeRptData.setTemperature("-0.3");
-        nodeRptDataByteBuffer.position(0);
-        nodeRptDataByteBuffer.get(dataout,0,20);
-        System.out.println(Hex2Str(dataout));
-
+        //NodeRptData nodeRptData = new NodeRptData(1,(short)1,"40.5","-25.3", (short) 1,"-123");
+        //Date now = new Date(119,2,5,17,37,59);
+        //nodeRptData.setTime(now);
+        //System.out.println("T:"+ nodeRptData.getTemperatue() +" V:"+nodeRptData.getVoltage()+" S:"+nodeRptData.getSignal());
+        //nodeRptData.printNodeRpt();
+       // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //System.out.println(sdf.format(now));
+       // nodeRptData.setTime(now);
+        byte[] testbytes = {0x68,0x05,0x00,0x00,0x00,0x01,0x05,0x04,0x64,0x02,  0x00,0x01,0x23,0x01,(byte)0x80,0x3B,0x25,0x11,0x05,0x03,0x14};
+        NodeRptData testRpt = new NodeRptData();
+        testRpt.getByteBuffer().put(testbytes,1,20);
+        testRpt.printNodeRpt();
 
 
+        System.out.println(testRpt);
     }
 }
