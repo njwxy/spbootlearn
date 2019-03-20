@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${title}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">   </script>
+</head>
+<body>
+<form th:action="@{/add}" th:method="post" th:object="${enrollmap}" >
+    <table border="1">
+        <tr>
+            <th>网关地址</th>
+            <th>节点数量</th>
+            <th>节点开始地址</th>
+        </tr>
+        <tr>
+            <td><input type="text" th:field="*{gwAddr}" /></td>
+            <td><input type="text" th:field="*{nodeNum}" /></td>
+            <td><input type="text" th:field="*{nodeAddr}" /></td>
+            <td><input type="submit"  value="提交" /></td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>

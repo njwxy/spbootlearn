@@ -1,6 +1,11 @@
 package com.wxy.testneo4j;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.wxy.comm.MessageHandler;
 import com.wxy.comm.NIOServer;
+import com.wxy.test.PvMsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +13,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,29 +31,18 @@ import java.util.Date;
 
 @Controller
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.wxy"})
 public class SpringBootNeo4jApplication {
     private final static Logger log = LoggerFactory.getLogger(SpringBootNeo4jApplication.class);
-    UserService userService;
-    DeviceService deviceService;
-
-    public DeviceService getDeviceService() {
-        return deviceService;
-    }
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public void setDeviceService(DeviceService deviceService) {
-        this.deviceService = deviceService;
-    }
-
-
-    public UserService getUserService() {
-        return userService;
-    }
+    private DeviceService deviceService;
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+    private PvMsgHandle pvMsgHandle;
+
 
     @GetMapping("/hello")
     public String sayHello(Model model){
@@ -62,92 +59,114 @@ public class SpringBootNeo4jApplication {
         return "/hello";
     }
 
-    @RequestMapping(value = "/new")
-    public String saveOrUpdateUser(){
-    //    User user = new User((long) 1,"aaa",20);
-     //   userService.saveOrUpdate(user);
-      //  System.out.println(user.toString());
-       // return user.toString();
-        return "/hello";
+    @RequestMapping(value = "/nodelist/{gwaddr}")
+    public String showDeviceList(Model model, @PathVariable("gwaddr") long gwaddr){
+        List lstDevice =  deviceService.getDevices(gwaddr);
+        model.addAttribute("devices",lstDevice);
+        model.addAttribute("gwaddr",gwaddr);
+        return "/nodelist";
     }
 
-    @Bean
-    CommandLineRunner demo(){
-        return args -> {
 
-          //  User user = new User();
-           // user.setAge(25);
-            //user.setName("aaabbb");
-           // userService.saveOrUpdate(user);
-            //log.info(user.toString());
-            log.info("demo started -----------------------------------------------!!!");
 
-            List<User> userList= userService.getUserList();
-            userList.forEach(user1->System.out.println(user1));
-
-        };
+    @RequestMapping("/enroll")
+    public  String login(ModelMap map){
+        DeviceEnroll deviceEnroll= new DeviceEnroll(1,2,100);
+        map.put("enrollmap",deviceEnroll);
+        map.put("title","开通录入设备");
+        return "enrolldevice";
     }
+
+    @RequestMapping(value="/add",method=RequestMethod.POST)
+    public String add(Model model, @Valid DeviceEnroll deviceEnroll, BindingResult result){
+        long gwAddr = deviceEnroll.getGwAddr();
+        long nodeAddr = deviceEnroll.getNodeAddr();
+        Integer nodeNum = deviceEnroll.getNodeNum();
+
+
+
+
+        model.addAttribute("gwAddr",gwAddr);
+        model.addAttribute("nodeAddr",nodeAddr);
+        model.addAttribute("nodeNum",nodeNum);
+
+        if(result.hasErrors()){
+            model.addAttribute("MSG", "出错啦！");
+            String defaultMessage = result.getFieldError().getDefaultMessage();
+            model.addAttribute("defaultMessage",defaultMessage);
+        }else{
+
+            addGroupDevices(gwAddr,nodeAddr,nodeNum);
+
+            model.addAttribute("MSG", "提交成功！");
+        }
+
+        return "result";
+    }
+
+
+
+
+
 
     void addGroupDevices(long gwAddr,long nodeAddr,int num)
     {
+
+        ArrayList<Device> deviceArrayList = new ArrayList<Device>();
+
+
         Device device = new Device();
         device.setDevAddr(gwAddr);
         device.setType(0);
-
-        Device device1 = deviceService.saveDevice(device);
-        if(device1 ==null)
-        {
-            log.info("insert device"+gwAddr+"failed");
-            //return;
-        }
+        device.setProduceTime(new Date());
+        deviceArrayList.add(device);
 
         for(long i=0;i<num;i++)
         {
             long devnum= i+nodeAddr;
             device = new Device();
+            device.setProduceTime(new Date());
             device.setType(1);
             device.setDevAddr(devnum);
-            device1 = deviceService.saveDevice(device);
-            if(device1 == null)
-            {
-
-                log.info("insert device"+devnum+"failed");
-            }
-
-                deviceService.gwAddNode(gwAddr,devnum);
-
+            deviceArrayList.add(device);
         }
-
-
-
-
+        deviceService.saveAllDevices(deviceArrayList);
+        deviceService.addRelationHas(gwAddr,nodeAddr,num);
     }
 
     @Bean
     CommandLineRunner testDevice(){
         return args -> {
-         // deviceService.deleteAll();
+        //    deviceService.deleteAll();
+         //   addGroupDevices(0,1,99);
+         //   addGroupDevices(100,101,99);
+
         //  addGroupDevices(0,1,30);
         //  addGroupDevices(100,101,30);
-            List lstDevice =  deviceService.getDevices(100);
-            for(int i=0;i<lstDevice.size();i++)
-            {
-                log.info(lstDevice.get(i).toString());
-            }
+          //  List lstDevice =  deviceService.getDevices(100);
+          //  log.info("node number is "+lstDevice.size());
+            //for(int i=0;i<lstDevice.size();i++)
+            //{
+              //  log.info(lstDevice.get(i).toString());
+            //}
         };
     }
 
     @Bean
-    CommandLineRunner runNetty()
-    {
-        return args -> {
-        NIOServer nioServer = new NIOServer(null,12345);
-        nioServer.startServer();
+    CommandLineRunner startNetty(){
+        return args->{
+            NIOServer nioServer= new NIOServer(pvMsgHandle,12345);
         };
     }
+
 
 
     public static void main(String[] args){
         SpringApplication.run(SpringBootNeo4jApplication.class,args);
     }
+
+
+  //  public void run(String... args) throws Exception {
+      //  NIOServer nioServer = new NIOServer(pvMsgHandle,12345);
+  //  }
 }
