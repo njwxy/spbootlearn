@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>DeviceList</title>
@@ -9,17 +9,20 @@
     <div class="panel-heading">
         <h3 class="panel-title">列表</h3>
     </div>
-    <div class="panel-body">
-        <table>
+
+    <div style="text-align: center">
+        <table border="1" width="600">
             <tr>
-                <th>addr</th>
-                <th>type</th>
-                <th>time</th>
+                <th>节点地址</th>
+                <th>节点类型</th>
+                <th>生产时间</th>
+                <th>网关地址</th>
             </tr>
             <tr th:each="device:${devices}">
                 <td th:text="${device.devAddr}"></td>
                 <td th:text="${device.type}"></td>
-                <td th:text="${device.produceTime}"></td>
+                <td th:text="${#dates.format(device.produceTime,'yy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${gwaddr}"></td>
             </tr>
         </table>
     </div>

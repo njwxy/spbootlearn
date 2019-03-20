@@ -62,8 +62,10 @@ public class SpringBootNeo4jApplication {
     public String showDeviceList(Model model, @PathVariable("gwaddr") long gwaddr){
         List lstDevice =  deviceService.getDevices(gwaddr);
         model.addAttribute("devices",lstDevice);
+        model.addAttribute("gwaddr",gwaddr);
         return "/nodelist";
     }
+
 
 
     @RequestMapping("/enroll")
@@ -134,9 +136,9 @@ public class SpringBootNeo4jApplication {
     @Bean
     CommandLineRunner testDevice(){
         return args -> {
-            deviceService.deleteAll();
-            addGroupDevices(0,1,99);
-            addGroupDevices(100,101,99);
+        //    deviceService.deleteAll();
+         //   addGroupDevices(0,1,99);
+         //   addGroupDevices(100,101,99);
 
         //  addGroupDevices(0,1,30);
         //  addGroupDevices(100,101,30);

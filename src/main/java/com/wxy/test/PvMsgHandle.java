@@ -3,7 +3,9 @@ package com.wxy.test;
 import com.wxy.comm.MessageHandler;
 import com.wxy.comm.NIOServer;
 
+import com.wxy.testneo4j.Device;
 import com.wxy.testneo4j.DeviceService;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.wxy.test.PrjFuncs.Hex2Str;
+import static com.wxy.test.PrjFuncs.getSendPacket;
 import static com.wxy.test.PrjFuncs.getSum;
 
 @Component
@@ -54,9 +60,38 @@ public class PvMsgHandle implements MessageHandler {
 
         switch (frameData.ctrl.get())
         {
-            case 0x94:
-                List lstDevice =  deviceService.getDevices(100);
-                System.out.println(lstDevice);
+            case MS_HEART_REQ:
+                byte needRpt= msg[frameData.size()];
+                if(needRpt == 1)
+                {
+                    long gwAddr = frameData.gwAddr.get();
+                    List <Device> lstDevice = deviceService.getDevices(gwAddr);
+                    short nodeNum = (short)lstDevice.size();
+                    if(nodeNum<100 && nodeNum>0){
+                        FrameData frameHead = new FrameData(MS_HEART_ACK,gwAddr);
+                        HeartAck heartAck = new HeartAck((short) 1,(short)1);
+                        heartAck.nodeNum.set(nodeNum);
+                        //List <Long> listlong = new ArrayList<Long>();
+                        //listlong = lstDevice.stream().map(e->{return  e.getDevAddr();}).collect(Collectors.toList());
+                        int pos=0;
+                        for(Device dev:lstDevice){
+                            heartAck.nodeAddr[pos++].set(dev.getDevAddr());
+                        }
+                        int datalen = heartAck.getPacketLength();
+                        byte [] appData = new byte[datalen];
+                        heartAck.getByteBuffer().get(appData);
+                        byte[] sendPacket= getSendPacket(frameHead,appData,datalen);
+
+
+
+                        if(ctx!=null){
+                            System.out.println( Hex2Str(sendPacket,sendPacket.length));
+                            ByteBuf byteBuf = ctx.alloc().buffer(sendPacket.length);
+                            byteBuf.writeBytes(sendPacket);
+                            ctx.writeAndFlush(byteBuf);
+                        }
+                    }
+                }
                 break;
         }
 
