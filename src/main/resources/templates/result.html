@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>result</title>
+</head>
+<body>
+
+<table>
+<tr>
+    <th>网关地址</th>
+    <th>节点地址</th>
+    <th>节点数量</th>
+</tr>
+<tr>
+    <td th:text="${gwAddr}"></td>
+    <td th:text="${nodeAddr}"></td>
+    <td th:text="${nodeNum}"></td>
+</tr>
+</table>
+
+<p th:text="${result}"></p>
+<p th:text="${MSG}"></p>
+<p style="color: red" th:text="${defaultMessage}"></p>
+</body>
+</html>

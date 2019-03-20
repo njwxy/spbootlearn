@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DeviceList</title>
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">列表</h3>
+    </div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <th>addr</th>
+                <th>type</th>
+                <th>time</th>
+            </tr>
+            <tr th:each="device:${devices}">
+                <td th:text="${device.devAddr}"></td>
+                <td th:text="${device.type}"></td>
+                <td th:text="${device.produceTime}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

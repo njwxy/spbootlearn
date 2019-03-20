@@ -1,8 +1,12 @@
 package com.wxy.testneo4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -24,6 +28,16 @@ public class DeviceService {
             return deviceNew;
     }
 
+    public void  saveAllDevices(ArrayList<Device> devices)
+    {
+        deviceReporsitory.saveAll(devices);
+        //deviceReporsitory.deleteAll(devices);
+    }
+    public void deleteAll(ArrayList<Device> devices)
+    {
+        deviceReporsitory.deleteAll(devices);
+    }
+
     public void deleteAll()
     {
         deviceReporsitory.deleteAll();
@@ -34,5 +48,9 @@ public class DeviceService {
     }
 
     public List getDevices(long gwAddr){return deviceReporsitory.getDeviceList(gwAddr);};
+
+    public void addRelationHas(long gwAddr,long nodeAddr,int num){
+        deviceReporsitory.addRelationHas(gwAddr,nodeAddr,num);
+    }
 
 }
