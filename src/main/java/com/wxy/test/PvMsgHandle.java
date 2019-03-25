@@ -6,7 +6,9 @@ import com.wxy.comm.NIOServer;
 import com.wxy.testneo4j.Device;
 import com.wxy.testneo4j.DeviceService;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,10 @@ public class PvMsgHandle implements MessageHandler {
     //}
 
     @Override
-    public void protocolProcess(ChannelHandlerContext ctx, byte[] msg) {
+    public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) {
+        final ByteBuf buf =  msga.content();
+        byte [] msg= new byte[buf.readableBytes()];
+        buf.readBytes(msg);
         FrameData frameData= new FrameData();
         frameData.getByteBuffer().put(msg,0,frameData.size());
         if (         ( frameData.start.get() != (byte) 0x68)
@@ -64,8 +69,10 @@ public class PvMsgHandle implements MessageHandler {
                 byte needRpt= msg[frameData.size()];
                 if(needRpt == 1)
                 {
+                    /*查找数据库*/
                     long gwAddr = frameData.gwAddr.get();
                     List <Device> lstDevice = deviceService.getDevices(gwAddr);
+
                     short nodeNum = (short)lstDevice.size();
                     if(nodeNum<100 && nodeNum>0){
                         FrameData frameHead = new FrameData(MS_HEART_ACK,gwAddr);
@@ -81,14 +88,9 @@ public class PvMsgHandle implements MessageHandler {
                         byte [] appData = new byte[datalen];
                         heartAck.getByteBuffer().get(appData);
                         byte[] sendPacket= getSendPacket(frameHead,appData,datalen);
-
-
-
                         if(ctx!=null){
                             System.out.println( Hex2Str(sendPacket,sendPacket.length));
-                            ByteBuf byteBuf = ctx.alloc().buffer(sendPacket.length);
-                            byteBuf.writeBytes(sendPacket);
-                            ctx.writeAndFlush(byteBuf);
+                            ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket) ,msga.sender()));
                         }
                     }
                 }

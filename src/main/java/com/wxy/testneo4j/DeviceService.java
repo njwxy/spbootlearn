@@ -12,15 +12,17 @@ import java.util.List;
 @Service
 public class DeviceService {
 
+    @Autowired
     private DeviceReporsitory deviceReporsitory;
 
-    @Autowired
-    public DeviceService(DeviceReporsitory deviceReporsitory) {
-        this.deviceReporsitory = deviceReporsitory;
-    }
+   // @Autowired
+  //  public DeviceService(DeviceReporsitory deviceReporsitory) {
+    //    this.deviceReporsitory = deviceReporsitory;
+   // }
 
     public Device saveDevice(Device device)
     {
+
         Device deviceNew = deviceReporsitory.findByDevAddr(device.getDevAddr());
         if(deviceNew ==null)
             return deviceReporsitory.save(device);

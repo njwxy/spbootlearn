@@ -58,6 +58,6 @@ public class NIOServer {
 
 
     public static void main(String args[]){
-        NIOServer nioServer = new NIOServer(new PvMsgHandle(),12345);
+        NIOServer nioServer = new NIOServer(new TestMessageHandle(),12345);
     }
 }

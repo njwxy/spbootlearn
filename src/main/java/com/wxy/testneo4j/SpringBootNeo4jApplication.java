@@ -43,6 +43,9 @@ public class SpringBootNeo4jApplication {
     @Autowired
     private PvMsgHandle pvMsgHandle;
 
+    @Autowired
+   // private GwConfigService gwConfigService;
+    GwConfigReporsitory gwConfigReporsitory;
 
     @GetMapping("/hello")
     public String sayHello(Model model){
@@ -82,10 +85,6 @@ public class SpringBootNeo4jApplication {
         long gwAddr = deviceEnroll.getGwAddr();
         long nodeAddr = deviceEnroll.getNodeAddr();
         Integer nodeNum = deviceEnroll.getNodeNum();
-
-
-
-
         model.addAttribute("gwAddr",gwAddr);
         model.addAttribute("nodeAddr",nodeAddr);
         model.addAttribute("nodeNum",nodeNum);
@@ -113,8 +112,6 @@ public class SpringBootNeo4jApplication {
     {
 
         ArrayList<Device> deviceArrayList = new ArrayList<Device>();
-
-
         Device device = new Device();
         device.setDevAddr(gwAddr);
         device.setType(0);
@@ -149,6 +146,12 @@ public class SpringBootNeo4jApplication {
             //{
               //  log.info(lstDevice.get(i).toString());
             //}
+            GwConfig gwConfig = new GwConfig();
+            gwConfig.setGwAddr(100);
+            gwConfig.setHeartInterval((short) 1);
+            gwConfig.setPollingInterval((short)1);
+
+            gwConfigReporsitory.save(gwConfig);
         };
     }
 

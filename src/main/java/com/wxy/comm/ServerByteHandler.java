@@ -10,6 +10,8 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+
 import static com.wxy.test.PrjFuncs.Hex2Str;
 
 public class ServerByteHandler  extends SimpleChannelInboundHandler<DatagramPacket>  {
@@ -25,15 +27,16 @@ public class ServerByteHandler  extends SimpleChannelInboundHandler<DatagramPack
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
-        final ByteBuf buf = msg.content();
+ /*       final ByteBuf buf = msg.content();
         int readableBytes = buf.readableBytes();
         byte[] content = new byte[readableBytes];
         buf.readBytes(content);
-
         String reqmsg = Hex2Str(content,content.length);
         log.info(reqmsg);
+
+   */
         if(messageHandler !=null) {
-                messageHandler.protocolProcess(ctx, content);
+                messageHandler.protocolProcess(ctx, msg);
             }
         }
 }
