@@ -12,14 +12,21 @@
             <th>网关地址</th>
             <th>节点数量</th>
             <th>节点开始地址</th>
+            <th>节点轮询间隔</th>
+            <th>网关心跳间隔</th>
         </tr>
         <tr>
             <td><input type="text" th:field="*{gwAddr}" /></td>
             <td><input type="text" th:field="*{nodeNum}" /></td>
             <td><input type="text" th:field="*{nodeAddr}" /></td>
+            <td><input type="text" th:field="*{pollingInterval}" /></td>
+            <td><input type="text" th:field="*{heartInterval}" /></td>
             <td><input type="submit"  value="提交" /></td>
         </tr>
     </table>
+
+
+
 </form>
 
 </body>

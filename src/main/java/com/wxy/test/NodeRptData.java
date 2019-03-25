@@ -23,8 +23,6 @@ public class NodeRptData extends Struct {
     u8 time[6];
 */
 
-
-
     public final Unsigned32 nodeAddr = new Unsigned32();
     public final Unsigned8 nodeState = new Unsigned8();
     public final Unsigned8[] voltage = array(new Unsigned8[2]);
@@ -50,21 +48,23 @@ public class NodeRptData extends Struct {
         mi = (short)(setDate.getMinutes());
         ss = (short)(setDate.getSeconds());
 
-        this.time[5].set(yy);
-        this.time[4].set(mm);
-        this.time[3].set(dd);
-        this.time[2].set(hh);
-        this.time[1].set(mi);
-        this.time[0].set(ss);
+        this.time[0].set(yy);
+        this.time[1].set(mm);
+        this.time[2].set(dd);
+        this.time[3].set(hh);
+        this.time[4].set(mi);
+        this.time[5].set(ss);
         //setDateTime();
         return 0;
     }
 
     public void printNodeRpt(){
-        System.out.println("A:"+nodeAddr.get()+" S:"+nodeState.get()+" V:"+getVoltage()+  " T:"+ getTemperatue() +" R:"+relayState.get()+" S:"+getSignal());
-        Date dateTime = new Date(time[5].get()+100,time[4].get()-1,time[3].get(),time[2].get(),time[1].get(),time[0].get());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(sdf.format(dateTime));
+        Date dateTime = new Date(time[0].get()+100,time[1].get()-1,time[2].get(),time[3].get(),time[4].get(),time[5].get());
+        //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss ");
+        System.out.println(sdf.format(dateTime)+"A:"+nodeAddr.get()+" S:"+nodeState.get()+" V:"+getVoltage()+
+                " T:"+ getTemperatue() +" R:"+relayState.get()+" S:"+getSignal());
+
     }
 
     public float getTemperatue()

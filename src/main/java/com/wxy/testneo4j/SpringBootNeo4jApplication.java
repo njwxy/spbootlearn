@@ -70,11 +70,9 @@ public class SpringBootNeo4jApplication {
         return "/nodelist";
     }
 
-
-
     @RequestMapping("/enroll")
     public  String login(ModelMap map){
-        DeviceEnroll deviceEnroll= new DeviceEnroll(1,2,100);
+        DeviceEnroll deviceEnroll= new DeviceEnroll(0,1,99,1,1);
         map.put("enrollmap",deviceEnroll);
         map.put("title","开通录入设备");
         return "enrolldevice";
@@ -95,8 +93,12 @@ public class SpringBootNeo4jApplication {
             model.addAttribute("defaultMessage",defaultMessage);
         }else{
 
+            GwConfig gwConfig = new GwConfig();
+            gwConfig.setGwAddr(gwAddr);
+            gwConfig.setHeartInterval((short) deviceEnroll.getHeartInterval());
+            gwConfig.setPollingInterval((short)deviceEnroll.getPollingInterval());
+            gwConfigReporsitory.save(gwConfig);
             addGroupDevices(gwAddr,nodeAddr,nodeNum);
-
             model.addAttribute("MSG", "提交成功！");
         }
 
@@ -134,7 +136,8 @@ public class SpringBootNeo4jApplication {
     @Bean
     CommandLineRunner testDevice(){
         return args -> {
-        //    deviceService.deleteAll();
+           //deviceService.deleteAll();
+           // gwConfigReporsitory.deleteAll();
          //   addGroupDevices(0,1,99);
          //   addGroupDevices(100,101,99);
 
@@ -146,12 +149,11 @@ public class SpringBootNeo4jApplication {
             //{
               //  log.info(lstDevice.get(i).toString());
             //}
-            GwConfig gwConfig = new GwConfig();
-            gwConfig.setGwAddr(100);
-            gwConfig.setHeartInterval((short) 1);
-            gwConfig.setPollingInterval((short)1);
-
-            gwConfigReporsitory.save(gwConfig);
+           // GwConfig gwConfig = new GwConfig();
+            //gwConfig.setGwAddr(100);
+            //gwConfig.setHeartInterval((short) 1);
+           // gwConfig.setPollingInterval((short)1);
+            //gwConfigReporsitory.save(gwConfig);
         };
     }
 
