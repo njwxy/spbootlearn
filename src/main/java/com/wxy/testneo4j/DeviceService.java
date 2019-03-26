@@ -55,4 +55,9 @@ public class DeviceService {
         deviceReporsitory.addRelationHas(gwAddr,nodeAddr,num);
     }
 
+    public  Device  findGwByNodeAddr(long nodeAddr)
+    {
+        return deviceReporsitory.findGwByNodeAddr(nodeAddr);
+    }
+
 }

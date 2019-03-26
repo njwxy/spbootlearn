@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShowNodeData</title>
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">列表</h3>
+    </div>
+
+    <div style="text-align: center">
+        <table border="1" width="600">
+            <tr>
+                <th>地址</th>
+                <th>电压</th>
+                <th>温度</th>
+                <th>继电器</th>
+                <th>信号</th>
+                <th>时间</th>
+            </tr>
+                <tr th:each="pvnode:${pvNodes}">
+                <td th:text="${pvnode.devAddr}"></td>
+                <td th:text="${pvnode.voltage}"></td>
+                <td th:text="${pvnode.temperature}"></td>
+                <td th:text="${pvnode.relaySate}"></td>
+                <td th:text="${pvnode.signal}"></td>
+                <td th:text="${#dates.format(pvnode.time,'yy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -34,7 +34,10 @@ public class NodeRptData extends Struct {
 
     //public Date dateTime;
 
-
+    public  Date getTime(){
+        Date dateTime = new Date(time[0].get()+100,time[1].get()-1,time[2].get(),time[3].get(),time[4].get(),time[5].get());
+        return dateTime;
+    }
 
 
     public int setTime(Date setDate ){

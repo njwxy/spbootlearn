@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,12 +39,13 @@ public class PvMsgHandle implements MessageHandler {
     private final static short MS_HEART_ACK = 0x14;
 
     public ArrayList<GateWay> gateWayArrayList;
+    private ChannelHandlerContext localCtx=null;
 
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
     }
 
-    GateWay findGateWay(long gwAddr){
+    private GateWay findGateWay(long gwAddr){
         for (GateWay gw: gateWayArrayList
              ) {
             if(gw.devAddr == gwAddr)
@@ -63,8 +65,81 @@ public class PvMsgHandle implements MessageHandler {
     //    this.deviceService = deviceService;
     //}
 
+    public GateWay getGateWay(long gwAddr){
+        GateWay gateWay = findGateWay(gwAddr);
+        if(gateWay == null) {
+            gateWay = new GateWay();
+
+            /*网关配置信息*/
+            GwConfig gwConfig = gwConfigReporsitory.findByGwaddr(gwAddr);
+            if(gwConfig ==null)
+            {
+                log.error("gwaddr "+gwAddr+" is not configured");
+                return null;
+            }
+            gateWay.devAddr = gwAddr;
+            gateWay.heartInterval = gwConfig.getHeartInterval();
+            gateWay.pollingInterval = gwConfig.getPollingInterval();
+            gateWay.nodeList.clear();
+
+
+            /*查找数据库*/
+            List <Device> lstDevice = deviceService.getDevices(gwAddr);
+            for(Device dev:lstDevice){
+                long nodeAddr = dev.getDevAddr();
+                gateWay.nodeList.put(nodeAddr,new PvNode(nodeAddr));
+            }
+            gateWayArrayList.add(gateWay);
+        }
+        return gateWay;
+    }
+
+    public  String sendSetRelayState(long devAddr,short relayState)
+    {
+
+        Device devGw  =  deviceService.findGwByNodeAddr(devAddr);
+        if(devGw==null) {
+            return "gateway of node" + devAddr + "not find";
+        }
+
+        else //(devGw!=null)
+        {
+            GateWay gateWay = getGateWay(devGw.getDevAddr());
+            if(gateWay==null)
+            {
+                return "gateway of node " + devAddr + "not register";
+            }
+            else
+            {
+                PvNode pvNode = gateWay.nodeList.get(devAddr);
+                if(pvNode!=null)
+                {
+                    //   byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
+                    // nodeAddr+relaystate
+                    FrameData frameHead = new FrameData(MS_SET_RELAY,gateWay.devAddr);
+                    SetRelay setRelay = new SetRelay();
+                    setRelay.nodeAddr.set(devAddr);
+                    setRelay.relayState.set(relayState);
+                    byte [] appData = new byte[setRelay.size()];
+                    setRelay.getByteBuffer().get(appData);
+                    byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
+                    log.info (Hex2Str(sendPacket,sendPacket.length));
+                    if(localCtx!=null)
+                        localCtx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket) ,gateWay.getClientIpAddr()));
+                }
+                else
+                {
+                    return "node: "+devAddr+ " in "+ gateWay.devAddr + "not found";
+                }
+            }
+        }
+         return  "set relay ok";
+    }
+
+
     @Override
     public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) {
+        localCtx = ctx;
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
         buf.readBytes(msg);
@@ -85,42 +160,22 @@ public class PvMsgHandle implements MessageHandler {
             return;
         }
 
+
+        long gwAddr = frameData.gwAddr.get();
+        GateWay gateWay = getGateWay(gwAddr);
+        if(gateWay== null)
+            return;
+
+        gateWay.setClientIpAddr(new InetSocketAddress(msga.sender().getAddress(),msga.sender().getPort()));
+
+
+
         switch (frameData.ctrl.get())
         {
             case MS_HEART_REQ:
             {
-
                 byte needRpt= msg[frameData.size()];
-                long gwAddr = frameData.gwAddr.get();
-
-                GateWay gateWay = findGateWay(gwAddr);
-                if(gateWay == null) {
-                    gateWay = new GateWay();
-
-                    /*网关配置信息*/
-                    GwConfig gwConfig = gwConfigReporsitory.findByGwaddr(gwAddr);
-                    if(gwConfig ==null)
-                    {
-                        log.error("gwaddr "+gwAddr+" is not configured");
-                        break;
-                    }
-                    gateWay.devAddr = gwAddr;
-                    gateWay.heartInterval = gwConfig.getHeartInterval();
-                    gateWay.pollingInterval = gwConfig.getPollingInterval();
-                    gateWay.nodeList.clear();
-
-
-                    /*查找数据库*/
-                    List <Device> lstDevice = deviceService.getDevices(gwAddr);
-                    for(Device dev:lstDevice){
-                        long nodeAddr = dev.getDevAddr();
-                        gateWay.nodeList.put(nodeAddr,new PvNode(nodeAddr));
-                    }
-                    gateWayArrayList.add(gateWay);
-                }
-
                 FrameData frameHead = new FrameData(MS_HEART_ACK,gwAddr);
-
                 if(needRpt == 1)
                 {
                     short nodeNum = (short)gateWay.nodeList.size();
@@ -142,7 +197,7 @@ public class PvMsgHandle implements MessageHandler {
                         byte[] sendPacket= getSendPacket(frameHead,appData,datalen);
                         if(ctx!=null){
                             System.out.println( Hex2Str(sendPacket,sendPacket.length));
-                            ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket) ,msga.sender()));
+                            ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket) ,gateWay.getClientIpAddr()));
                         }
                     }
                 }
@@ -165,7 +220,17 @@ public class PvMsgHandle implements MessageHandler {
                 }
             }
             break;
+            case MS_RNODE_ACK:
             case MS_RELAY_ACK:{
+                NodeRptData nodeRptData = new NodeRptData();
+                nodeRptData.getByteBuffer().put(msg,frameData.size(),nodeRptData.size());
+                PvNode pvNode = gateWay.nodeList.get(nodeRptData.nodeAddr.get());
+                pvNode.temperature = nodeRptData.getTemperatue();
+                pvNode.relaySate = (byte)nodeRptData.relayState.get();
+                pvNode.voltage = nodeRptData.getVoltage();
+                pvNode.signal = nodeRptData.getSignal();
+                pvNode.time = nodeRptData.getTime();
+                log.info(pvNode.toString());
 
             }
             break;
@@ -180,8 +245,15 @@ public class PvMsgHandle implements MessageHandler {
                     NodeRptData nodeRptData = new NodeRptData();
                     int nodeRptDataLen = nodeRptData.size();
                     nodeRptData.getByteBuffer().put(msg,appPos+1+i*nodeRptDataLen,nodeRptDataLen);
-                    log.info(nodeRptData.toString());
-                    nodeRptData.printNodeRpt();
+                   // log.info(nodeRptData.toString());
+                    PvNode pvNode = gateWay.nodeList.get(nodeRptData.nodeAddr.get());
+                    pvNode.temperature = nodeRptData.getTemperatue();
+                    pvNode.relaySate = (byte)nodeRptData.relayState.get();
+                    pvNode.voltage = nodeRptData.getVoltage();
+                    pvNode.signal = nodeRptData.getSignal();
+                    pvNode.time = nodeRptData.getTime();
+                    //nodeRptData.printNodeRpt();
+                    log.info(pvNode.toString());
                 }
             }
             break;

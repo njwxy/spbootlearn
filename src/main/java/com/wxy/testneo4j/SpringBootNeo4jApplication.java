@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wxy.comm.MessageHandler;
 import com.wxy.comm.NIOServer;
+import com.wxy.test.GateWay;
 import com.wxy.test.PvMsgHandle;
+import com.wxy.test.PvNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +72,36 @@ public class SpringBootNeo4jApplication {
         return "/nodelist";
     }
 
+    @RequestMapping(value = "/setRelay/{nodeAddr}/{relayValue}")
+    public String setRealy(Model model, @PathVariable("nodeAddr") long nodeaddr,@PathVariable("relayValue") short relayValue){
+        String retval = pvMsgHandle.sendSetRelayState(nodeaddr,relayValue);
+        model.addAttribute("result",retval);
+        return "relayState";
+    }
+
     @RequestMapping("/enroll")
     public  String login(ModelMap map){
         DeviceEnroll deviceEnroll= new DeviceEnroll(0,1,99,1,1);
         map.put("enrollmap",deviceEnroll);
         map.put("title","开通录入设备");
         return "enrolldevice";
+    }
+
+    @RequestMapping("/showNodeData/{gwAddr}")
+    public String showNodeData(Model model,@PathVariable("gwAddr") long gwAddr)
+    {
+        GateWay gateWay = pvMsgHandle.getGateWay(gwAddr);
+        if(gateWay!=null)
+        {
+            ArrayList<PvNode> pvNodesList = new ArrayList<PvNode>();
+            int pos=0;
+            for(Map.Entry<Long,PvNode> entry:gateWay.nodeList.entrySet() ){
+                pvNodesList.add(entry.getValue());
+            }
+            model.addAttribute("pvNodes",pvNodesList);
+            return "showNodeData";
+        }
+        return "errorNotFindGateWay";
     }
 
     @RequestMapping(value="/add",method=RequestMethod.POST)
@@ -86,13 +112,11 @@ public class SpringBootNeo4jApplication {
         model.addAttribute("gwAddr",gwAddr);
         model.addAttribute("nodeAddr",nodeAddr);
         model.addAttribute("nodeNum",nodeNum);
-
         if(result.hasErrors()){
             model.addAttribute("MSG", "出错啦！");
             String defaultMessage = result.getFieldError().getDefaultMessage();
             model.addAttribute("defaultMessage",defaultMessage);
         }else{
-
             GwConfig gwConfig = new GwConfig();
             gwConfig.setGwAddr(gwAddr);
             gwConfig.setHeartInterval((short) deviceEnroll.getHeartInterval());
@@ -101,18 +125,12 @@ public class SpringBootNeo4jApplication {
             addGroupDevices(gwAddr,nodeAddr,nodeNum);
             model.addAttribute("MSG", "提交成功！");
         }
-
         return "result";
     }
 
 
-
-
-
-
     void addGroupDevices(long gwAddr,long nodeAddr,int num)
     {
-
         ArrayList<Device> deviceArrayList = new ArrayList<Device>();
         Device device = new Device();
         device.setDevAddr(gwAddr);

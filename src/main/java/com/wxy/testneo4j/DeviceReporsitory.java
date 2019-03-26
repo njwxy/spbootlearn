@@ -23,5 +23,7 @@ public interface DeviceReporsitory extends Neo4jRepository<Device,Long> {
     @Query("match (gw:Device) where gw.devAddr={gwAddr} match(node:Device) where node.devAddr<{nodeAddr}+{number} and node.devAddr>={nodeAddr} create (gw)-[:HAS]->(node)")
     void addRelationHas(@Param("gwAddr") long gwAddr,@Param("nodeAddr") long nodeAddr,@Param("number") int number);
 
+    @Query("match (n:Device)-[:HAS]->(k:Device) where k.devAddr={nodeAddr} return n")
+    Device findGwByNodeAddr(@Param("nodeAddr") long nodeAddr);
 
 }
