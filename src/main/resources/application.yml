@@ -3,6 +3,7 @@ server:
 spring:
   thymeleaf:
     mode: LEGACYHTML5
+    prefix: classpath:/templates/
   data:
     neo4j:
       uri: http://tx.njqiteng.club:7474

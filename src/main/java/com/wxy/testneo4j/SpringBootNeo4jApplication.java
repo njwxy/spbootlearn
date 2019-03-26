@@ -61,7 +61,7 @@ public class SpringBootNeo4jApplication {
         people.add(p3);
         model.addAttribute("singlePerson", single);
         model.addAttribute("people", people);
-        return "/hello";
+        return "hello";
     }
 
     @RequestMapping(value = "/nodelist/{gwaddr}")
@@ -69,10 +69,10 @@ public class SpringBootNeo4jApplication {
         List lstDevice =  deviceService.getDevices(gwaddr);
         model.addAttribute("devices",lstDevice);
         model.addAttribute("gwaddr",gwaddr);
-        return "/nodelist";
+        return "nodelist";
     }
 
-    @RequestMapping(value = "/setRelay/{nodeAddr}/{relayValue}")
+    @RequestMapping(value = "setRelay/{nodeAddr}/{relayValue}")
     public String setRealy(Model model, @PathVariable("nodeAddr") long nodeaddr,@PathVariable("relayValue") short relayValue){
         String retval = pvMsgHandle.sendSetRelayState(nodeaddr,relayValue);
         model.addAttribute("result",retval);
@@ -84,7 +84,7 @@ public class SpringBootNeo4jApplication {
         DeviceEnroll deviceEnroll= new DeviceEnroll(0,1,99,1,1);
         map.put("enrollmap",deviceEnroll);
         map.put("title","开通录入设备");
-        return "enrolldevice";
+        return "enrollDevice";
     }
 
     @RequestMapping("/showNodeData/{gwAddr}")
