@@ -13,14 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -57,6 +55,8 @@ public class MainController {
         };
     }
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Autowired
     private DeviceService deviceService;
@@ -158,6 +158,13 @@ public class MainController {
     }
 
 
+
+    @GetMapping("/list")
+    public String queryUsers(Model model){
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select * from user");
+        model.addAttribute("userlist",list);
+        return  "userList";
+    }
 
     @Bean
     CommandLineRunner startNetty(){

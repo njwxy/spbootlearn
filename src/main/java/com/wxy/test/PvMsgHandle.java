@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,9 @@ public class PvMsgHandle implements MessageHandler {
     private DeviceService deviceService;
     @Autowired
     private GwConfigReporsitory gwConfigReporsitory;
+
+    @Autowired
+    PvNodeService pvNodeService;
 
    // public void setDeviceService(DeviceService deviceService) {
     //    this.deviceService = deviceService;
@@ -251,6 +255,7 @@ public class PvMsgHandle implements MessageHandler {
                     pvNode.voltage = nodeRptData.getVoltage();
                     pvNode.signal = nodeRptData.getSignal();
                     pvNode.time = nodeRptData.getTime();
+                    pvNodeService.createPvNode(pvNode);
                     //nodeRptData.printNodeRpt();
                     log.info(pvNode.toString());
                 }
