@@ -6,11 +6,11 @@ spring:
     prefix: classpath:/templates/
   data:
     neo4j:
-      uri: http://tx.njqiteng.club:7474
+      uri: http://148.70.64.121:7474
       username: neo4j
       password: 12345678
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/test
-    username: root
+    username: pvtest
     password: 123
 
