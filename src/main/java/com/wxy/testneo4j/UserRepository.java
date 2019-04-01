@@ -1,4 +1,4 @@
-package com.wxy.usertest;
+package com.wxy.testneo4j;
 
 import com.wxy.usertest.User;
 import org.springframework.data.neo4j.annotation.Query;
