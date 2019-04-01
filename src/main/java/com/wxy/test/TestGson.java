@@ -35,10 +35,6 @@ public class TestGson {
     public static void main(String args[])
     {
         log.info("test gson start");
-
-
-
-
         List<Device> devices = new ArrayList<Device>();
         for(long i=0;i<20;i++)
             devices.add(new Device(i,i,1,new Date()));

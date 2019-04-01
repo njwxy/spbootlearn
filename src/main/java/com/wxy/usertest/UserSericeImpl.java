@@ -1,4 +1,4 @@
-package com.wxy.testneo4j;
+package com.wxy.usertest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

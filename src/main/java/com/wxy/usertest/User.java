@@ -1,4 +1,4 @@
-package com.wxy.testneo4j;
+package com.wxy.usertest;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
