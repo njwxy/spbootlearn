@@ -68,6 +68,7 @@ public class PvMsgHandle implements MessageHandler {
     //    this.deviceService = deviceService;
     //}
 
+
     public GateWay getGateWay(long gwAddr){
         GateWay gateWay = findGateWay(gwAddr);
         if(gateWay == null) {
@@ -228,12 +229,15 @@ public class PvMsgHandle implements MessageHandler {
                 NodeRptData nodeRptData = new NodeRptData();
                 nodeRptData.getByteBuffer().put(msg,frameData.size(),nodeRptData.size());
                 PvNode pvNode = gateWay.nodeList.get(nodeRptData.nodeAddr.get());
-                pvNode.temperature = nodeRptData.getTemperatue();
-                pvNode.relaySate = (byte)nodeRptData.relayState.get();
-                pvNode.voltage = nodeRptData.getVoltage();
-                pvNode.signal = nodeRptData.getSignal();
-                pvNode.time = nodeRptData.getTime();
-                log.info(pvNode.toString());
+                if(pvNode!=null)
+                {
+                    pvNode.temperature = nodeRptData.getTemperatue();
+                    pvNode.relaySate = (byte)nodeRptData.relayState.get();
+                    pvNode.voltage = nodeRptData.getVoltage();
+                    pvNode.signal = nodeRptData.getSignal();
+                    pvNode.time = nodeRptData.getTime();
+                    log.info(pvNode.toString());
+                }
 
             }
             break;

@@ -53,7 +53,11 @@ public class PrjFuncs {
         byte[] packet = new byte[frameHead.size()+datalen+2];
         ByteBuffer byteBuffer= frameHead.getByteBuffer();
         byteBuffer.get(packet,0,frameHead.size());
-        System.arraycopy(appData,0,packet,frameHead.size(),datalen);
+
+        if(datalen>0) {
+            System.arraycopy(appData, 0, packet, frameHead.size(), datalen);
+        }
+
         int pos = frameHead.size()+datalen;
         packet[pos++] = getSum(packet,0,pos);
         packet[pos] = 0x16;
