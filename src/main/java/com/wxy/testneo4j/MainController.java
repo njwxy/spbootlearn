@@ -30,30 +30,16 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.wxy"})
 public class MainController {
     private final static Logger log = LoggerFactory.getLogger(MainController.class);
-    @Autowired
-    private UserService userService;
+   // @Autowired
+  //  private UserService userService;
 
-    @GetMapping("/hello")
-    public String sayHello(Model model){
-        User single = new User("aaaaa", 11);
-        List<User> people = new ArrayList<User>();
-        User p1 = new User("xx",11);
-        User p2 = new User("yy",22);
-        User p3 = new User("zz",33);
-        people.add(p1);
-        people.add(p2);
-        people.add(p3);
-        model.addAttribute("singlePerson", single);
-        model.addAttribute("people", people);
-        return "hello";
-    }
 
-    @Bean
-    CommandLineRunner runhello(){
-        return args->{
-            System.out.println("----------------------------hello function started--------------------");
-        };
-    }
+   // @Bean
+  //  CommandLineRunner runhello(){
+   //     return args->{
+    //        System.out.println("----------------------------hello function started--------------------");
+    //    };
+    //}
 
     @Autowired
     JdbcTemplate jdbcTemplate;

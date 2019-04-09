@@ -1,4 +1,6 @@
-package com.wxy.test;
+package com.wxy.testonly;
+
+import com.wxy.test.EnergyNode;
 
 import java.util.HashMap;
 

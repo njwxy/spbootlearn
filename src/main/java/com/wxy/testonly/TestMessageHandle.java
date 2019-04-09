@@ -1,5 +1,6 @@
-package com.wxy.comm;
+package com.wxy.testonly;
 
+import com.wxy.comm.MessageHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,9 +22,6 @@ public class TestMessageHandle implements MessageHandler {
         buf.readBytes(content);
         String reqmsg = Hex2Str(content,content.length);
         log.info(reqmsg);
-
-        ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer("helloClient".getBytes()),
-                msg.sender()));
-
+        ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer("helloClient".getBytes()),msg.sender()));
     }
 }

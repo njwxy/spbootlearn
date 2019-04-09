@@ -1,4 +1,5 @@
-package com.wxy.test;
+package com.wxy.testonly;
+import com.wxy.test.NodeRptData;
 import javolution.io.Struct;
 import org.springframework.format.annotation.DateTimeFormat;
 
