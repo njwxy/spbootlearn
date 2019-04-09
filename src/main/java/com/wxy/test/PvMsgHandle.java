@@ -75,15 +75,15 @@ public class PvMsgHandle implements MessageHandler {
             gateWay = new GateWay();
 
             /*网关配置信息*/
-            GwConfig gwConfig = gwConfigReporsitory.findByGwaddr(gwAddr);
-            if(gwConfig ==null)
-            {
-                log.error("gwaddr "+gwAddr+" is not configured");
-                return null;
-            }
+            //GwConfig gwConfig = gwConfigReporsitory.findByGwaddr(gwAddr);
+            //if(gwConfig ==null)
+            //{
+               // log.error("gwaddr "+gwAddr+" is not configured");
+               // return null;
+            //}
             gateWay.devAddr = gwAddr;
-            gateWay.heartInterval = gwConfig.getHeartInterval();
-            gateWay.pollingInterval = gwConfig.getPollingInterval();
+            gateWay.heartInterval = 1;
+            gateWay.pollingInterval = 1;
             gateWay.nodeList.clear();
 
 

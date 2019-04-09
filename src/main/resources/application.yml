@@ -6,8 +6,8 @@ spring:
     prefix: classpath:/templates/
   data:
     neo4j:
-      #uri: http://148.70.64.121:7474
-      uri: http://10.1.3.251:7474
+      uri: http://148.70.64.121:7474
+      #uri: http://10.1.3.251:7474
       username: neo4j
       password: 12345678
   datasource:
