@@ -42,8 +42,6 @@ public class EnergyMsgHandle implements MessageHandler {
         nodeList = new Hashtable<Long,EnergyNode>(8192); /* max 4K items support now */
     }
 
-
-
     public  int sendSetRelayState(long devAddr,short relayState)
     {
 

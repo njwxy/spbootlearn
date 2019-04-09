@@ -54,8 +54,6 @@ public class MainController {
     // private GwConfigService gwConfigService;
             GwConfigReporsitory gwConfigReporsitory;
 
-
-
     @RequestMapping(value = "/nodelist/{gwaddr}")
     public String showDeviceList(Model model, @PathVariable("gwaddr") long gwaddr){
         List lstDevice =  deviceService.getDevices(gwaddr);

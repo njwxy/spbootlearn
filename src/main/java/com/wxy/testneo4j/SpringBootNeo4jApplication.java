@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -30,16 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Date;
 
-
+@EnableConfigurationProperties
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.wxy"})
 public class SpringBootNeo4jApplication {
     private final static Logger log = LoggerFactory.getLogger(SpringBootNeo4jApplication.class);
-
-
-
-
-
 
     public static void main(String[] args){
         SpringApplication.run(SpringBootNeo4jApplication.class,args);

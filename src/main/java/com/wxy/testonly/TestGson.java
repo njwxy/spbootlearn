@@ -36,8 +36,7 @@ public class TestGson {
         for(long i=0;i<20;i++)
             devices.add(new Device(i,i,1,new Date()));
 
-        Gson gson = new GsonBuilder().setDateFormat("yy-mm-dd").create();
-        //Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
         String listStr = gson.toJson(devices);
         System.out.println(listStr);
 

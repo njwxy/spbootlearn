@@ -21,9 +21,6 @@ public class Device {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date produceTime;
 
-
-
-
     public Device() {
     }
 

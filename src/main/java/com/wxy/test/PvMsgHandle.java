@@ -1,5 +1,7 @@
 package com.wxy.test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wxy.comm.MessageHandler;
 import com.wxy.comm.NIOServer;
 
@@ -19,11 +21,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.stream.Collectors;
 import static com.wxy.test.PrjFuncs.*;
 
@@ -63,6 +64,9 @@ public class PvMsgHandle implements MessageHandler {
 
     @Autowired
     PvNodeService pvNodeService;
+
+    @Autowired
+    SystemParams systemParams;
 
    // public void setDeviceService(DeviceService deviceService) {
     //    this.deviceService = deviceService;
@@ -246,7 +250,8 @@ public class PvMsgHandle implements MessageHandler {
                 /*num+ num*NodeRptData*/
                 int appPos = frameData.size();
                 short itemnum = msg[appPos];
-                log.info(Hex2Str(msg,msg.length));
+                //log.info(Hex2Str(msg,msg.length));
+                ArrayList<PvNode> pvNodes = new ArrayList<PvNode>();
                 for(int i=0;i<itemnum;i++)
                 {
                     NodeRptData nodeRptData = new NodeRptData();
@@ -259,9 +264,36 @@ public class PvMsgHandle implements MessageHandler {
                     pvNode.voltage = nodeRptData.getVoltage();
                     pvNode.signal = nodeRptData.getSignal();
                     pvNode.time = nodeRptData.getTime();
+                    pvNodes.add(pvNode);
                     pvNodeService.createPvNode(pvNode);
+                    //String listStr = gson.toJson(devices);
+
                     //nodeRptData.printNodeRpt();
-                    log.info(pvNode.toString());
+
+                }
+                if(itemnum>0) {
+                    Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
+                    //Gson gson = new GsonBuilder().create();
+                    String jsonstr = gson.toJson(pvNodes);
+                    log.info(jsonstr);
+
+
+                    //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
+
+                    byte[] sendPacket = jsonstr.getBytes();
+                    //InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1",12333);
+                    ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort())));
+                   // PvNode[] array = new Gson().fromJson(jsonstr,PvNode[].class);
+                   // List<PvNode> list = Arrays.asList(array);
+                    //list.stream().forEach(pvNode ->{
+                     //   System.out.println(pvNode.toString());
+                    //});
+
+
+
+
+
+
                 }
             }
             break;

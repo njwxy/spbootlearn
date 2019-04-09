@@ -14,4 +14,6 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/test
     username: pvtest
     password: 123
-
+systemparam:
+  web-server-ip: "127.0.0.1"
+  web-server-port: 12333

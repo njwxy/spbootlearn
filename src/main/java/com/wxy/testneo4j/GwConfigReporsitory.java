@@ -8,5 +8,4 @@ public interface GwConfigReporsitory extends Neo4jRepository <GwConfig,Long>{
     //@Query("MATCH (d:gwconfig) WHERE d.devAddr = {devAddr} RETURN d")
     @Query("match(c:GwConfig) where c.gwAddr={devAddr} return c")
     GwConfig findByGwaddr(@Param("devAddr") long devAddr);
-
 }
