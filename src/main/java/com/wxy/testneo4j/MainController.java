@@ -5,6 +5,7 @@ import com.wxy.comm.NIOServer;
 import com.wxy.test.GateWay;
 import com.wxy.test.PvMsgHandle;
 import com.wxy.test.PvNode;
+import com.wxy.test.SystemParams;
 import com.wxy.usertest.User;
 import com.wxy.usertest.UserService;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public class MainController {
     //        System.out.println("----------------------------hello function started--------------------");
     //    };
     //}
+
+    @Autowired
+    SystemParams systemParams;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -153,7 +157,7 @@ public class MainController {
     @Bean
     CommandLineRunner startNetty(){
         return args->{
-            NIOServer nioServer= new NIOServer(pvMsgHandle,12345);
+            NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
         };
     }
 

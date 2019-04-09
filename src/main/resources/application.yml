@@ -17,3 +17,8 @@ spring:
 systemparam:
   web-server-ip: "127.0.0.1"
   web-server-port: 12333
+  front-server-port: 12345
+  polling-interval: 1
+  heart-interval: 1
+
+

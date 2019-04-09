@@ -86,8 +86,8 @@ public class PvMsgHandle implements MessageHandler {
                // return null;
             //}
             gateWay.devAddr = gwAddr;
-            gateWay.heartInterval = 1;
-            gateWay.pollingInterval = 1;
+            gateWay.heartInterval = systemParams.getHeartInterval();
+            gateWay.pollingInterval = systemParams.getPollingInterval();
             gateWay.nodeList.clear();
 
 

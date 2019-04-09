@@ -11,6 +11,33 @@ import org.springframework.stereotype.Component;
 public class SystemParams {
     private String webServerIp;
     private int webServerPort;
+    private int heartInterval;
+    private int pollingInterval;
+    private int frontServerPort; /* 前置机通信端口 */
+
+    public int getFrontServerPort() {
+        return frontServerPort;
+    }
+
+    public void setFrontServerPort(int frontServerPort) {
+        this.frontServerPort = frontServerPort;
+    }
+
+    public int getHeartInterval() {
+        return heartInterval;
+    }
+
+    public void setHeartInterval(int heartInterval) {
+        this.heartInterval = heartInterval;
+    }
+
+    public int getPollingInterval() {
+        return pollingInterval;
+    }
+
+    public void setPollingInterval(int pollingInterval) {
+        this.pollingInterval = pollingInterval;
+    }
 
     public String getWebServerIp() {
         return webServerIp;
