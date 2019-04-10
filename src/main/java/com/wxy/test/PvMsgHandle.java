@@ -7,6 +7,7 @@ import com.wxy.comm.NIOServer;
 
 import com.wxy.comm.UdpServer;
 import com.wxy.comm.webServerMessageHandle;
+import com.wxy.gsonMessage.Result;
 import com.wxy.testneo4j.Device;
 import com.wxy.testneo4j.DeviceService;
 import com.wxy.testneo4j.GwConfig;
@@ -23,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -99,12 +101,12 @@ public class PvMsgHandle implements MessageHandler {
 
 
             /*查找数据库*/
-            List <Device> lstDevice = deviceService.getDevices(gwAddr);
+           /* List <Device> lstDevice = deviceService.getDevices(gwAddr);
             for(Device dev:lstDevice){
                 long nodeAddr = dev.getDevAddr();
                 gateWay.nodeList.put(nodeAddr,new PvNode(nodeAddr));
             }
-            gateWayArrayList.add(gateWay);
+            gateWayArrayList.add(gateWay);*/
         }
         return gateWay;
     }
@@ -153,7 +155,7 @@ public class PvMsgHandle implements MessageHandler {
 
 
     @Override
-    public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) {
+    public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) throws IOException {
         localCtx = ctx;
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
@@ -193,6 +195,18 @@ public class PvMsgHandle implements MessageHandler {
                 FrameData frameHead = new FrameData(MS_HEART_ACK,gwAddr);
                 if(needRpt == 1)
                 {
+                    if(gateWay.nodeLoad==false) {
+                        Result<Long> result = new Result<Long>("getNodeAddr", false,systemParams.getFmtId());
+                        result.data = new Long(gwAddr);
+                        Gson gson = new GsonBuilder().create();
+                        String outstr = gson.toJson(result);
+                        System.out.println(outstr);
+                        byte[] boutstr = outstr.getBytes();
+
+                        java.net.DatagramPacket packet = new java.net.DatagramPacket(boutstr,boutstr.length,new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort()));
+                        udpServer.sendPacket(packet);
+                        break;
+                    }
                     short nodeNum = (short)gateWay.nodeList.size();
                     if(nodeNum<100 && nodeNum>0){
 

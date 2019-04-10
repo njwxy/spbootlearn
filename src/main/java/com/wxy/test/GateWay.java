@@ -29,9 +29,13 @@ public class GateWay {
             Iterator<Map.Entry<Long,PvNode>> entries = nodeList.entrySet().iterator();
             while(entries.hasNext()) {
                 Map.Entry<Long,PvNode> entry = entries.next();
-                System.out.println("方法三：key = "+entry.getKey()+"--value="+entry.getValue().toString());
-            //    nodeList.remove(entry.getKey());
+                Long key = entry.getKey();
+                System.out.println("key "+ key);
+                System.out.println("remove:key = "+entry.getKey()+"--value="+entry.getValue().toString());
+                //nodeList.remove(entry.getKey());
+                entries.remove();
             }
+            System.out.println("left size "+nodeList.size());
 
             /*for(Long key:nodeList.keySet())
             {
