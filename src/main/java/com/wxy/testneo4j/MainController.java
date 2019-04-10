@@ -27,8 +27,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@ComponentScan(basePackages = {"com.wxy"})
+//@Controller
+//@ComponentScan(basePackages = {"com.wxy"})
 public class MainController {
     private final static Logger log = LoggerFactory.getLogger(MainController.class);
    // @Autowired
@@ -154,11 +154,5 @@ public class MainController {
         return  "userList";
     }
 
-    @Bean
-    CommandLineRunner startNetty(){
-        return args->{
-            NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
-        };
-    }
 
 }

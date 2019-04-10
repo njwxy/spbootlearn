@@ -8,6 +8,7 @@ import com.wxy.comm.NIOServer;
 import com.wxy.test.GateWay;
 import com.wxy.test.PvMsgHandle;
 import com.wxy.test.PvNode;
+import com.wxy.test.SystemParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,18 @@ public class SpringBootNeo4jApplication {
     public static void main(String[] args){
         SpringApplication.run(SpringBootNeo4jApplication.class,args);
     }
+    @Autowired
+    private PvMsgHandle pvMsgHandle;
 
+    @Autowired
+    private SystemParams systemParams;
+
+    @Bean
+    CommandLineRunner startNetty(){
+        return args->{
+            NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
+        };
+    }
 
   //  public void run(String... args) throws Exception {
       //  NIOServer nioServer = new NIOServer(pvMsgHandle,12345);

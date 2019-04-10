@@ -45,7 +45,7 @@ public class PvMsgHandle implements MessageHandler {
 
     public ArrayList<GateWay> gateWayArrayList;
     private ChannelHandlerContext localCtx=null;
-    private final UdpServer udpServer;
+    private  UdpServer udpServer;
 
     @Autowired
     private DeviceService deviceService;
@@ -62,7 +62,6 @@ public class PvMsgHandle implements MessageHandler {
 
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
-        udpServer = new UdpServer(systemParams.getWebListenPort(),new webServerMessageHandle(this));
     }
 
     private GateWay findGateWay(long gwAddr){
@@ -97,8 +96,8 @@ public class PvMsgHandle implements MessageHandler {
             gateWay.devAddr = gwAddr;
             gateWay.heartInterval = systemParams.getHeartInterval();
             gateWay.pollingInterval = systemParams.getPollingInterval();
-            gateWay.nodeList.clear();
 
+            gateWayArrayList.add(gateWay);
 
             /*查找数据库*/
            /* List <Device> lstDevice = deviceService.getDevices(gwAddr);
@@ -156,6 +155,12 @@ public class PvMsgHandle implements MessageHandler {
 
     @Override
     public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) throws IOException {
+        if(udpServer==null)
+        {
+            udpServer = new UdpServer(systemParams.getWebListenPort(),new webServerMessageHandle(this));
+            Thread threadUdp = new Thread(udpServer);
+            threadUdp.start();
+        }
         localCtx = ctx;
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
@@ -183,9 +188,19 @@ public class PvMsgHandle implements MessageHandler {
         if(gateWay== null)
             return;
 
+        if(gateWay.nodeList.size()==0)
+        {
+            Result<Long> result = new Result<Long>("getNodeAddr", false, systemParams.getFmtId());
+            result.data = new Long(gwAddr);
+            Gson gson = new GsonBuilder().create();
+            String outstr = gson.toJson(result);
+            System.out.println(outstr);
+            byte[] boutstr = outstr.getBytes();
+            java.net.DatagramPacket packet = new java.net.DatagramPacket(boutstr, boutstr.length, new InetSocketAddress(systemParams.getWebServerIp(), systemParams.getWebServerPort()));
+            udpServer.sendPacket(packet);
+        }
+
         gateWay.setClientIpAddr(new InetSocketAddress(msga.sender().getAddress(),msga.sender().getPort()));
-
-
 
         switch (frameData.ctrl.get())
         {
@@ -196,15 +211,6 @@ public class PvMsgHandle implements MessageHandler {
                 if(needRpt == 1)
                 {
                     if(gateWay.nodeLoad==false) {
-                        Result<Long> result = new Result<Long>("getNodeAddr", false,systemParams.getFmtId());
-                        result.data = new Long(gwAddr);
-                        Gson gson = new GsonBuilder().create();
-                        String outstr = gson.toJson(result);
-                        System.out.println(outstr);
-                        byte[] boutstr = outstr.getBytes();
-
-                        java.net.DatagramPacket packet = new java.net.DatagramPacket(boutstr,boutstr.length,new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort()));
-                        udpServer.sendPacket(packet);
                         break;
                     }
                     short nodeNum = (short)gateWay.nodeList.size();
@@ -280,6 +286,8 @@ public class PvMsgHandle implements MessageHandler {
                     nodeRptData.getByteBuffer().put(msg,appPos+1+i*nodeRptDataLen,nodeRptDataLen);
                    // log.info(nodeRptData.toString());
                     PvNode pvNode = gateWay.nodeList.get(nodeRptData.nodeAddr.get());
+                    if(pvNode==null)
+                        continue;
                     pvNode.temperature = nodeRptData.getTemperatue();
                     pvNode.relaySate = (byte)nodeRptData.relayState.get();
                     pvNode.voltage = nodeRptData.getVoltage();
@@ -295,12 +303,15 @@ public class PvMsgHandle implements MessageHandler {
                 if(itemnum>0) {
                     Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
                     //Gson gson = new GsonBuilder().create();
-                    String jsonstr = gson.toJson(pvNodes);
+
+
+                    Result <List<PvNode>> result = new Result<List<PvNode>>(PvNode.class.getSimpleName(),true,1);
+                    result.data = pvNodes;
+
+
+                    String jsonstr = gson.toJson(result);
                     log.info(jsonstr);
-
-
                     //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
-
                     byte[] sendPacket = jsonstr.getBytes();
                     //InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1",12333);
                     ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort())));
@@ -309,13 +320,7 @@ public class PvMsgHandle implements MessageHandler {
                     //list.stream().forEach(pvNode ->{
                      //   System.out.println(pvNode.toString());
                     //});
-
-
-
-
-
-
-                }
+               }
             }
             break;
 
