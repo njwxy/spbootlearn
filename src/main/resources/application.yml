@@ -20,5 +20,6 @@ systemparam:
   front-server-port: 12345
   polling-interval: 1
   heart-interval: 1
-
+  webListenPort: 12344
+  ftmId: 1 #前置机ID号
 

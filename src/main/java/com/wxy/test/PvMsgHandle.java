@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.wxy.comm.MessageHandler;
 import com.wxy.comm.NIOServer;
 
+import com.wxy.comm.UdpServer;
+import com.wxy.comm.webServerMessageHandle;
 import com.wxy.testneo4j.Device;
 import com.wxy.testneo4j.DeviceService;
 import com.wxy.testneo4j.GwConfig;
@@ -41,9 +43,24 @@ public class PvMsgHandle implements MessageHandler {
 
     public ArrayList<GateWay> gateWayArrayList;
     private ChannelHandlerContext localCtx=null;
+    private final UdpServer udpServer;
+
+    @Autowired
+    private DeviceService deviceService;
+   // @Autowired
+   // private GwConfigReporsitory gwConfigReporsitory;
+
+    @Autowired
+    PvNodeService pvNodeService;
+
+    @Autowired
+    SystemParams systemParams;
+
+
 
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
+        udpServer = new UdpServer(systemParams.getWebServerPort(),new webServerMessageHandle(this));
     }
 
     private GateWay findGateWay(long gwAddr){
@@ -57,16 +74,6 @@ public class PvMsgHandle implements MessageHandler {
         return  null;
     }
 
-    @Autowired
-    private DeviceService deviceService;
-    @Autowired
-    private GwConfigReporsitory gwConfigReporsitory;
-
-    @Autowired
-    PvNodeService pvNodeService;
-
-    @Autowired
-    SystemParams systemParams;
 
    // public void setDeviceService(DeviceService deviceService) {
     //    this.deviceService = deviceService;

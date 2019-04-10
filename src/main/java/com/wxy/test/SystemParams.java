@@ -14,6 +14,7 @@ public class SystemParams {
     private int heartInterval;
     private int pollingInterval;
     private int frontServerPort; /* 前置机通信端口 */
+    private int webListenPort; /*  服务器消息监听端口 */
 
     public int getFrontServerPort() {
         return frontServerPort;
