@@ -60,7 +60,7 @@ public class PvMsgHandle implements MessageHandler {
 
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
-        udpServer = new UdpServer(systemParams.getWebServerPort(),new webServerMessageHandle(this));
+        udpServer = new UdpServer(systemParams.getWebListenPort(),new webServerMessageHandle(this));
     }
 
     private GateWay findGateWay(long gwAddr){

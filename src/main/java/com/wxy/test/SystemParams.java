@@ -16,6 +16,14 @@ public class SystemParams {
     private int frontServerPort; /* 前置机通信端口 */
     private int webListenPort; /*  服务器消息监听端口 */
 
+    public int getWebListenPort() {
+        return webListenPort;
+    }
+
+    public void setWebListenPort(int webListenPort) {
+        this.webListenPort = webListenPort;
+    }
+
     public int getFrontServerPort() {
         return frontServerPort;
     }
