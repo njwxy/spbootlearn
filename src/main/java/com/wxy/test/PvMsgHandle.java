@@ -263,7 +263,7 @@ public class PvMsgHandle implements MessageHandler {
                 if(pvNode!=null)
                 {
                     pvNode.temperature = nodeRptData.getTemperatue();
-                    pvNode.relaySate = (byte)nodeRptData.relayState.get();
+                    pvNode.relayState = (byte)nodeRptData.relayState.get();
                     pvNode.voltage = nodeRptData.getVoltage();
                     pvNode.signal = nodeRptData.getSignal();
                     pvNode.time = nodeRptData.getTime();
@@ -289,7 +289,7 @@ public class PvMsgHandle implements MessageHandler {
                     if(pvNode==null)
                         continue;
                     pvNode.temperature = nodeRptData.getTemperatue();
-                    pvNode.relaySate = (byte)nodeRptData.relayState.get();
+                    pvNode.relayState = (byte)nodeRptData.relayState.get();
                     pvNode.voltage = nodeRptData.getVoltage();
                     pvNode.signal = nodeRptData.getSignal();
                     pvNode.time = nodeRptData.getTime();

@@ -6,7 +6,7 @@ public class PvNode {
     public long devAddr;
     public float voltage;
     public float temperature;
-    public byte relaySate;
+    public byte relayState;
     public int signal;
     public Date time;
 
@@ -14,10 +14,10 @@ public class PvNode {
         this.devAddr = devAddr;
     }
 
-    public void setPara(float voltage, float temperature, byte relaySate, int signal, Date time) {
+    public void setPara(float voltage, float temperature, byte relayState, int signal, Date time) {
         this.voltage = voltage;
         this.temperature = temperature;
-        this.relaySate = relaySate;
+        this.relayState = relayState;
         this.signal = signal;
         this.time = time;
     }
@@ -48,11 +48,11 @@ public class PvNode {
     }
 
     public byte getRelaySate() {
-        return relaySate;
+        return relayState;
     }
 
     public void setRelaySate(byte relaySate) {
-        this.relaySate = relaySate;
+        this.relayState = relayState;
     }
 
     public int getSignal() {
@@ -77,7 +77,7 @@ public class PvNode {
                 "devAddr=" + devAddr +
                 ", voltage=" + voltage +
                 ", temperature=" + temperature +
-                ", relaySate=" + relaySate +
+                ", relaySate=" + relayState +
                 ", signal=" + signal +
                 ", time=" + time +
                 '}';
