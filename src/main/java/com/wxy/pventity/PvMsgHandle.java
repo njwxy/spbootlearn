@@ -106,32 +106,32 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
         return gateWay;
     }
 
-    public  String sendSetRelayState(long devAddr,short relayState)
+    public  String sendSetRelayState(RelayState rs)
     {
+       // long gwAddr, long devAddr,short relayState
+        //Device devGw  =  deviceService.findGwByNodeAddr(devAddr);
+        //if(devGw==null) {
+//            return "gateway of node" + devAddr + "not find";
+  //      }
 
-        Device devGw  =  deviceService.findGwByNodeAddr(devAddr);
-        if(devGw==null) {
-            return "gateway of node" + devAddr + "not find";
-        }
+    //    else //(devGw!=null)
 
-        else //(devGw!=null)
-        {
-            GateWay gateWay = getGateWay(devGw.getDevAddr());
+            GateWay gateWay = getGateWay(rs.gwAddr);
             if(gateWay==null)
             {
-                return "gateway of node " + devAddr + "not register";
+                return "gateway of node " + rs.devAddr + "not register";
             }
             else
             {
-                PvNode pvNode = gateWay.nodeList.get(devAddr);
+                PvNode pvNode = gateWay.nodeList.get(rs.devAddr);
                 if(pvNode!=null)
                 {
                     //   byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
                     // nodeAddr+relaystate
                     FrameData frameHead = new FrameData(MS_SET_RELAY,gateWay.devAddr);
                     SetRelay setRelay = new SetRelay();
-                    setRelay.nodeAddr.set(devAddr);
-                    setRelay.relayState.set(relayState);
+                    setRelay.nodeAddr.set(rs.devAddr);
+                    setRelay.relayState.set((short) rs.state);
                     byte [] appData = new byte[setRelay.size()];
                     setRelay.getByteBuffer().get(appData);
                     byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
@@ -141,10 +141,10 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
                 }
                 else
                 {
-                    return "node: "+devAddr+ " in "+ gateWay.devAddr + "not found";
+                    return "node: "+rs.devAddr+ " in "+ gateWay.devAddr + "not found";
                 }
             }
-        }
+
          return  "set relay ok";
     }
 
@@ -325,8 +325,12 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
                     log.info(jsonstr);
                     //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
                     byte[] sendPacket = jsonstr.getBytes();
+
+                    DatagramPacket packet  = new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort()));
+                    if(webNioServer!=null)
+                        webNioServer.SendPacket(packet);
                     //InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1",12333);
-                    ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort())));
+                    //ctx.writeAndFlush();
                    // PvNode[] array = new Gson().fromJson(jsonstr,PvNode[].class);
                    // List<PvNode> list = Arrays.asList(array);
                     //list.stream().forEach(pvNode ->{

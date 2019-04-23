@@ -4,6 +4,7 @@ package com.wxy.ftm;
 import com.wxy.pventity.GateWay;
 import com.wxy.pventity.PvMsgHandle;
 import com.wxy.pventity.PvNode;
+import com.wxy.pventity.RelayState;
 import com.wxy.simuGraphDb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,9 @@ public class MainController {
         return "nodelist";
     }
 
-    @RequestMapping(value = "setRelay/{nodeAddr}/{relayValue}")
-    public String setRealy(Model model, @PathVariable("nodeAddr") long nodeaddr,@PathVariable("relayValue") short relayValue){
-        String retval = pvMsgHandle.sendSetRelayState(nodeaddr,relayValue);
+    @RequestMapping(value = "setRelay/{gwAddr}/{nodeAddr}/{relayValue}")
+    public String setRealy(Model model, @PathVariable("gwAddr") long gwAddr,@PathVariable("nodeAddr") long nodeaddr,@PathVariable("relayValue") short relayValue){
+        String retval = pvMsgHandle.sendSetRelayState(new RelayState(gwAddr, nodeaddr,relayValue));
         model.addAttribute("result",retval);
         return "relayState";
     }

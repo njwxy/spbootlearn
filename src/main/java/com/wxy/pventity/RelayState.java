@@ -1,12 +1,23 @@
 package com.wxy.pventity;
 
 public class RelayState {
+    public long gwAddr;
     public long devAddr;
     public int state;
 
-    public RelayState(long devAddr, int state) {
+
+    public RelayState(long gwAddr, long devAddr, int state) {
+        this.gwAddr = gwAddr;
         this.devAddr = devAddr;
         this.state = state;
+    }
+
+    public long getGwAddr() {
+        return gwAddr;
+    }
+
+    public void setGwAddr(long gwAddr) {
+        this.gwAddr = gwAddr;
     }
 
     public long getDevAddr() {

@@ -77,7 +77,7 @@ public class PvNode {
                 "devAddr=" + devAddr +
                 ", voltage=" + voltage +
                 ", temperature=" + temperature +
-                ", relaySate=" + relayState +
+                ", relayState=" + relayState +
                 ", signal=" + signal +
                 ", time=" + time +
                 '}';

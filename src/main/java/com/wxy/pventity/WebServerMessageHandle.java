@@ -91,5 +91,14 @@ public class WebServerMessageHandle extends SimpleChannelInboundHandler<Datagram
                 log.error("getNodeAddrAck must be list format.");
             }
         }
+        else if(retype.equals("RelayState"))
+        {
+            Gson gson = new GsonBuilder().create();
+            Type userListType = new TypeToken<Result<RelayState>>(){}.getType();
+            Result<RelayState> relayStateResult = gson.fromJson(msg,userListType);
+            RelayState relayState = relayStateResult.data;
+            pvMsgHandle.sendSetRelayState(relayState);
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-package com.wxy.ftm;
+package com.wxy.testonly;
 
 
 
