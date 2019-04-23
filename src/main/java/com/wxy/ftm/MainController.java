@@ -1,11 +1,10 @@
-package com.wxy.testneo4j;
+package com.wxy.ftm;
 
 
 import com.wxy.pventity.GateWay;
 import com.wxy.pventity.PvMsgHandle;
 import com.wxy.pventity.PvNode;
 import com.wxy.simuGraphDb.*;
-import com.wxy.test.SystemParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

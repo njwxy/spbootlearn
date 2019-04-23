@@ -1,9 +1,8 @@
-package com.wxy.testneo4j;
+package com.wxy.ftm;
 
 
 import com.wxy.comm.NIOServer;
 import com.wxy.pventity.PvMsgHandle;
-import com.wxy.test.SystemParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.wxy.testneo4j;
+package com.wxy.ftm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

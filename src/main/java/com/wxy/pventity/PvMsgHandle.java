@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.wxy.comm.NIOServer;
 import com.wxy.gsonMessage.Result;
 import com.wxy.test.FrameData;
-import com.wxy.test.SystemParams;
+import com.wxy.ftm.SystemParams;
 import com.wxy.simuGraphDb.Device;
 import com.wxy.simuGraphDb.DeviceService;
 import io.netty.buffer.ByteBuf;
