@@ -19,8 +19,8 @@ public class NIOServer {
     public MessageHandler messageHandler = null;
 
 
-    public NIOServer(MessageHandler messageHandler,int port) {
-        this.messageHandler = messageHandler;
+    public NIOServer(SimpleChannelInboundHandler messageHandler,int port) {
+       // this.messageHandler = messageHandler;
         this.port = port;
         acceptGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
@@ -30,7 +30,7 @@ public class NIOServer {
                         @Override
                         protected void initChannel(NioDatagramChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new ServerByteHandler(messageHandler));
+                            pipeline.addLast(messageHandler);
                         }
                     });
 

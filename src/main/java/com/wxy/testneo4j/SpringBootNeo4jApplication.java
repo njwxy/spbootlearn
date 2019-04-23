@@ -50,7 +50,7 @@ public class SpringBootNeo4jApplication {
     @Bean
     CommandLineRunner startNetty(){
         return args->{
-            NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
+          //  NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
         };
     }
 
