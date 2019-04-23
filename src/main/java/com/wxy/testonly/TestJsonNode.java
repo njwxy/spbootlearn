@@ -2,11 +2,10 @@ package com.wxy.testonly;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wxy.test.PvNode;
+import com.wxy.pventity.PvNode;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class TestJsonNode {
 

@@ -21,6 +21,7 @@ public class NIOServer {
 
     public NIOServer(MessageHandler messageHandler,int port) {
         this.messageHandler = messageHandler;
+
         this.port = port;
         acceptGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();

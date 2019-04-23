@@ -1,4 +1,4 @@
-package com.wxy.test;
+package com.wxy.pventity;
 
 import java.util.Date;
 

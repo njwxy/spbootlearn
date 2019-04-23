@@ -1,11 +1,5 @@
 package com.wxy.testonly;
-import com.wxy.test.NodeRptData;
-import javolution.io.Struct;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.wxy.pventity.NodeRptData;
 
 public class TestJavolution  {
 

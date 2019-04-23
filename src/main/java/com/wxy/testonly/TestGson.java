@@ -3,7 +3,7 @@ package com.wxy.testonly;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wxy.testneo4j.Device;
+import com.wxy.simuGraphDb.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ.*;

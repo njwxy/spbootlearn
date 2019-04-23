@@ -1,4 +1,4 @@
-package com.wxy.test;
+package com.wxy.EnergyEntity;
 
 import java.net.InetSocketAddress;
 import java.util.Date;

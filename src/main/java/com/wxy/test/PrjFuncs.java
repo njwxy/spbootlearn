@@ -47,7 +47,7 @@ public class PrjFuncs {
         return retTime;
     }
 
-    public static byte[] getSendPacket(FrameData frameHead,byte[] appData,int datalen)
+    public static byte[] getSendPacket(FrameData frameHead, byte[] appData, int datalen)
     {
         frameHead.len.set(datalen);
         byte[] packet = new byte[frameHead.size()+datalen+2];

@@ -1,12 +1,9 @@
-package com.wxy.testneo4j;
+package com.wxy.simuGraphDb;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service

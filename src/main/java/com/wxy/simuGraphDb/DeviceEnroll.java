@@ -1,4 +1,4 @@
-package com.wxy.testneo4j;
+package com.wxy.simuGraphDb;
 
 public class DeviceEnroll {
     private long gwAddr;

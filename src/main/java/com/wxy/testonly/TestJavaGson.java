@@ -1,4 +1,4 @@
-package com.wxy.gsonMessage;
+package com.wxy.testonly;
 
 
 import com.google.gson.Gson;
@@ -6,12 +6,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.wxy.comm.NIOServer;
-import com.wxy.test.PvNode;
+import com.wxy.gsonMessage.Result;
+import com.wxy.pventity.PvNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
@@ -132,7 +131,6 @@ public class TestJavaGson {
             PvNode pvNode = new PvNode(123+i);
             pvNode.setPara(42,25, (byte) 1,123,new Date());
             result.data.add(pvNode);
-
         }
 
         Gson gson = new GsonBuilder().create();

@@ -1,14 +1,19 @@
-package com.wxy.testneo4j;
+package com.wxy.simuGraphDb;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.wxy.simuGraphDb.Device;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.List;
 
+
+@Repository
 public interface DeviceReporsitory extends Neo4jRepository<Device,Long> {
 
     @Query("MATCH (d:Device) WHERE d.devAddr = {devAddr} RETURN d")

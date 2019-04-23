@@ -1,17 +1,16 @@
-package com.wxy.test;
+package com.wxy.pventity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wxy.comm.MessageHandler;
-import com.wxy.comm.NIOServer;
 
 import com.wxy.comm.UdpServer;
 import com.wxy.comm.webServerMessageHandle;
 import com.wxy.gsonMessage.Result;
-import com.wxy.testneo4j.Device;
-import com.wxy.testneo4j.DeviceService;
-import com.wxy.testneo4j.GwConfig;
-import com.wxy.testneo4j.GwConfigReporsitory;
+import com.wxy.test.FrameData;
+import com.wxy.test.SystemParams;
+import com.wxy.simuGraphDb.Device;
+import com.wxy.simuGraphDb.DeviceService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,17 +18,12 @@ import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.*;
-import java.util.stream.Collectors;
+
 import static com.wxy.test.PrjFuncs.*;
 
 @Component

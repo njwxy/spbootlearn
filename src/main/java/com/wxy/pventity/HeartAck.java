@@ -1,4 +1,4 @@
-package com.wxy.test;
+package com.wxy.pventity;
 
 import javolution.io.Struct;
 
@@ -14,12 +14,13 @@ public class HeartAck extends Struct {
     public final Unsigned8[] time = array(new Unsigned8[6]);
     public final Unsigned8 heartInterval = new Unsigned8();
     public final Unsigned8 pollingInterval = new Unsigned8();
+    public final Unsigned8 nodetype= new Unsigned8();
     public final Unsigned8 nodeNum = new Unsigned8();
     public final Unsigned32[] nodeAddr = array(new Unsigned32[100]); //max 100
 
     public int getPacketLength()
     {
-        return 9 + nodeNum.get()*4;
+        return 10 + nodeNum.get()*4;
     }
 
 
@@ -30,6 +31,7 @@ public class HeartAck extends Struct {
             time[i].set(timeget[i]);
         this.heartInterval.set( heartInterval);
         this.pollingInterval.set(pollingInterVal);
+        this.nodetype.set((short)0);
     }
 
     @Override

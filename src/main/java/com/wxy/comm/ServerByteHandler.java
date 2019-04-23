@@ -23,8 +23,6 @@ public class ServerByteHandler  extends SimpleChannelInboundHandler<DatagramPack
 
     private final static Logger log = LoggerFactory.getLogger(ServerByteHandler.class);
 
-
-
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
  /*       final ByteBuf buf = msg.content();
@@ -33,8 +31,8 @@ public class ServerByteHandler  extends SimpleChannelInboundHandler<DatagramPack
         buf.readBytes(content);
         String reqmsg = Hex2Str(content,content.length);
         log.info(reqmsg);
-
    */
+
         if(messageHandler !=null) {
                 messageHandler.protocolProcess(ctx, msg);
             }

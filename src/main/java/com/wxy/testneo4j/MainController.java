@@ -1,21 +1,15 @@
 package com.wxy.testneo4j;
 
 
-import com.wxy.comm.NIOServer;
-import com.wxy.test.GateWay;
-import com.wxy.test.PvMsgHandle;
-import com.wxy.test.PvNode;
+import com.wxy.pventity.GateWay;
+import com.wxy.pventity.PvMsgHandle;
+import com.wxy.pventity.PvNode;
+import com.wxy.simuGraphDb.*;
 import com.wxy.test.SystemParams;
-import com.wxy.usertest.User;
-import com.wxy.usertest.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -31,8 +25,8 @@ import java.util.Map;
 //@ComponentScan(basePackages = {"com.wxy"})
 public class MainController {
     private final static Logger log = LoggerFactory.getLogger(MainController.class);
-   // @Autowired
-  //  private UserService userService;
+    //@Autowired
+    //private UserService userService;
 
 
    // @Bean
