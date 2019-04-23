@@ -2,10 +2,8 @@ package com.wxy.pventity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wxy.comm.MessageHandler;
 
-import com.wxy.comm.UdpServer;
-import com.wxy.comm.webServerMessageHandle;
+import com.wxy.comm.NIOServer;
 import com.wxy.gsonMessage.Result;
 import com.wxy.test.FrameData;
 import com.wxy.test.SystemParams;
@@ -14,20 +12,20 @@ import com.wxy.simuGraphDb.DeviceService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
 
 import static com.wxy.test.PrjFuncs.*;
 
 @Component
-public class PvMsgHandle implements MessageHandler {
+public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
     private final static Logger log = LoggerFactory.getLogger(PvMsgHandle.class);
     private final static short MS_RNODE_DATA = 0x11;
     private final static short MS_RNODE_ACK = 0x91;
@@ -39,7 +37,9 @@ public class PvMsgHandle implements MessageHandler {
 
     public ArrayList<GateWay> gateWayArrayList;
     private ChannelHandlerContext localCtx=null;
-    private  UdpServer udpServer;
+   // private  UdpServer udpServer;
+    private WebServerMessageHandle webServerMessageHandle=null;
+    private NIOServer webNioServer;
 
     @Autowired
     private DeviceService deviceService;
@@ -54,9 +54,11 @@ public class PvMsgHandle implements MessageHandler {
 
 
 
+
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
     }
+
 
     private GateWay findGateWay(long gwAddr){
         for (GateWay gw: gateWayArrayList
@@ -147,14 +149,24 @@ public class PvMsgHandle implements MessageHandler {
     }
 
 
-    @Override
-    public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) throws IOException {
+
+    protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msga) throws Exception {
+
+        if(webServerMessageHandle==null)
+        {
+            webServerMessageHandle = new WebServerMessageHandle(this);
+            webNioServer = new NIOServer(webServerMessageHandle,systemParams.getWebListenPort());
+            new Thread(()->webNioServer.StartServer()).start();
+        }
+        /*
+
         if(udpServer==null)
         {
-            udpServer = new UdpServer(systemParams.getWebListenPort(),new webServerMessageHandle(this));
+            udpServer = new UdpServer(systemParams.getWebListenPort(),new WebServerMessageHandle(this));
             Thread threadUdp = new Thread(udpServer);
             threadUdp.start();
-        }
+        }*/
+
         localCtx = ctx;
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
@@ -190,8 +202,13 @@ public class PvMsgHandle implements MessageHandler {
             String outstr = gson.toJson(result);
             System.out.println(outstr);
             byte[] boutstr = outstr.getBytes();
-            java.net.DatagramPacket packet = new java.net.DatagramPacket(boutstr, boutstr.length, new InetSocketAddress(systemParams.getWebServerIp(), systemParams.getWebServerPort()));
-            udpServer.sendPacket(packet);
+          //   DatagramPacket packet = new DatagramPacket(boutstr, boutstr.length, ));
+            DatagramPacket packet = new DatagramPacket(Unpooled.wrappedBuffer(boutstr) ,new InetSocketAddress(systemParams.getWebServerIp(), systemParams.getWebServerPort()));
+            if(webNioServer!=null)
+                webNioServer.SendPacket(packet);
+            //webServerMessageHandle.sendPacket(packet);
+
+            //udpServer.sendPacket(packet);
         }
 
         gateWay.setClientIpAddr(new InetSocketAddress(msga.sender().getAddress(),msga.sender().getPort()));
@@ -244,7 +261,8 @@ public class PvMsgHandle implements MessageHandler {
                     appData[7] =(byte) gateWay.pollingInterval;
                     byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
                     if(ctx!=null){
-                        ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),msga.sender()));
+                        log.info("send MS_HEART_ACK:"+Hex2Str(sendPacket,sendPacket.length));
+                        ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),gateWay.getClientIpAddr()));
                     }
                 }
             }

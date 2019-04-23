@@ -19,11 +19,11 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.wxy","com.wxy.simuGraphDb"})
 @EnableNeo4jRepositories("com.wxy.simuGraphDb")
-public class SpringBootNeo4jApplication {
-    private final static Logger log = LoggerFactory.getLogger(SpringBootNeo4jApplication.class);
+public class PvFront {
+    private final static Logger log = LoggerFactory.getLogger(PvFront.class);
 
     public static void main(String[] args){
-        SpringApplication.run(SpringBootNeo4jApplication.class,args);
+        SpringApplication.run(PvFront.class,args);
     }
     @Autowired
     private PvMsgHandle pvMsgHandle;
@@ -35,6 +35,7 @@ public class SpringBootNeo4jApplication {
     CommandLineRunner startNetty(){
         return args->{
             NIOServer nioServer= new NIOServer(pvMsgHandle,systemParams.getFrontServerPort());
+            nioServer.StartServer();
         };
     }
 

@@ -1,10 +1,10 @@
 package com.wxy.EnergyEntity;
 
-import com.wxy.comm.MessageHandler;
 import com.wxy.test.FrameData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.Hashtable;
 import static com.wxy.test.PrjFuncs.Hex2Str;
 import static com.wxy.test.PrjFuncs.getSendPacket;
 
-public class EnergyMsgHandle implements MessageHandler {
+public class EnergyMsgHandle  extends SimpleChannelInboundHandler<DatagramPacket> {
     private final static Logger log = LoggerFactory.getLogger(EnergyMsgHandle.class);
     private final static short MS_SET_HEART_TIME = 0x23;
     private final static short MS_SET_HEART_TIME_ACK = 0xA3; //
@@ -42,7 +42,6 @@ public class EnergyMsgHandle implements MessageHandler {
 
     public  int sendSetRelayState(long devAddr,short relayState)
     {
-
         EnergyNode energyNode  =  nodeList.get(devAddr);
         if(energyNode==null) {
             log.error( "energy node" + devAddr + "not find");
@@ -50,7 +49,6 @@ public class EnergyMsgHandle implements MessageHandler {
         }
         else
         {
-
             FrameData frameHead = new FrameData(MS_REMT_CTRL_RELAY,devAddr);
             byte [] appData = new byte[2];
             appData[0] = 1; /*  collect module =1 communication module = 0  */
@@ -66,7 +64,7 @@ public class EnergyMsgHandle implements MessageHandler {
 
 
     @Override
-    public void protocolProcess(ChannelHandlerContext ctx, DatagramPacket msga) {
+    protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msga) throws Exception {
         localCtx = ctx;
 
         final ByteBuf buf =  msga.content();

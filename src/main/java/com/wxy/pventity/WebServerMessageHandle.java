@@ -1,4 +1,5 @@
-package com.wxy.comm;
+package com.wxy.pventity;
+
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,36 +7,51 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.wxy.gsonMessage.Result;
-import com.wxy.pventity.GateWay;
-import com.wxy.pventity.PvMsgHandle;
-import com.wxy.pventity.PvNode;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.List;
 
-public class webServerMessageHandle implements UdpMessageCallback {
-    private final static Logger log = LoggerFactory.getLogger(webServerMessageHandle.class);
-    PvMsgHandle pvMsgHandle;
+public class WebServerMessageHandle extends SimpleChannelInboundHandler<DatagramPacket> {
+    private final static Logger log = LoggerFactory.getLogger(WebServerMessageHandle.class);
+    private PvMsgHandle pvMsgHandle=null;
+    private ChannelHandlerContext localCtx=null;
 
-    public webServerMessageHandle(PvMsgHandle pvMsgHandle) {
+    public WebServerMessageHandle(PvMsgHandle pvMsgHandle) {
         this.pvMsgHandle = pvMsgHandle;
     }
 
+
+
+    public void sendPacket(DatagramPacket packet)
+    {
+
+        if(localCtx!=null)
+        {
+            localCtx.writeAndFlush(packet);
+        }
+
+    }
+
     @Override
-    public void messageHandle(DatagramSocket socket, DatagramPacket packet) throws IOException {
-        SocketAddress ftmAddress = packet.getSocketAddress();
+    protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msga) throws Exception {
 
+        localCtx = ctx;
+        final ByteBuf buf =  msga.content();
+        byte [] msgb= new byte[buf.readableBytes()];
+        buf.readBytes(msgb);
 
-        String msg = new String(packet.getData(), 0, packet.getLength());
+        String msg = new String(msgb);
         System.out.println("receive msg:" + msg);
 
-        //String  rawDataString = packet.getData().toString();
+        InetSocketAddress clientaddr = msga.sender();
+
         JsonElement je = new JsonParser().parse(msg);
         String retype  = je.getAsJsonObject().get("type").getAsString();
         boolean isList = je.getAsJsonObject().get("isList").getAsBoolean();
@@ -74,7 +90,6 @@ public class webServerMessageHandle implements UdpMessageCallback {
             {
                 log.error("getNodeAddrAck must be list format.");
             }
-
         }
     }
 }
