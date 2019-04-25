@@ -1,6 +1,6 @@
 FROM java:8
 VOLUME /tmp
-ADD ./target/pvfront-1.0.0.jar
+ADD ./target/pvfront-1.0.0.jar app.jar
 RUN bash -c 'touch /app.jar'
 EXPOSE 8099/tcp
 EXPOSE 12345/udp
