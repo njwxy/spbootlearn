@@ -316,7 +316,6 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
                     Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
                     //Gson gson = new GsonBuilder().create();
 
-
                     Result <List<PvNode>> result = new Result<List<PvNode>>(PvNode.class.getSimpleName(),true,1);
                     result.data = pvNodes;
 

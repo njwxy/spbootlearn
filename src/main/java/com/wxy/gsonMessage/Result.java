@@ -1,6 +1,11 @@
 package com.wxy.gsonMessage;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.Date;
+
 public class Result<T> {
     public String type;
     public boolean isList;
@@ -12,6 +17,8 @@ public class Result<T> {
         this.isList = isList;
         this.ftmId = ftmId;
     }
+
+
 
 }
 
