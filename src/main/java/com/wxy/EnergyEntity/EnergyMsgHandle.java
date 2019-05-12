@@ -70,7 +70,6 @@ public class EnergyMsgHandle  extends SimpleChannelInboundHandler<DatagramPacket
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
 
-
         buf.readBytes(msg);
         FrameData frameData= new FrameData();
         frameData.getByteBuffer().put(msg,0,frameData.size());

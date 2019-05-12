@@ -26,12 +26,8 @@ public class WebServerMessageHandle extends SimpleChannelInboundHandler<Datagram
     public WebServerMessageHandle(PvMsgHandle pvMsgHandle) {
         this.pvMsgHandle = pvMsgHandle;
     }
-
-
-
     public void sendPacket(DatagramPacket packet)
     {
-
         if(localCtx!=null)
         {
             localCtx.writeAndFlush(packet);
@@ -49,9 +45,7 @@ public class WebServerMessageHandle extends SimpleChannelInboundHandler<Datagram
 
         String msg = new String(msgb);
         System.out.println("receive msg:" + msg);
-
         InetSocketAddress clientaddr = msga.sender();
-
         JsonElement je = new JsonParser().parse(msg);
         String retype  = je.getAsJsonObject().get("type").getAsString();
         boolean isList = je.getAsJsonObject().get("isList").getAsBoolean();
@@ -66,8 +60,6 @@ public class WebServerMessageHandle extends SimpleChannelInboundHandler<Datagram
                 Type userListType = new TypeToken<Result<List<Long>>>(){}.getType();
                 Result<List<Long>> userListResult = gson.fromJson(msg,userListType);
                 List<Long> nodeList = userListResult.data;
-
-
                 int nodenum = nodeList.size()-1;
                 GateWay gateWay =  pvMsgHandle.getGateWay(nodeList.get(0));
                 if(gateWay !=null)
