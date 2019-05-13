@@ -6,18 +6,31 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component("nioserver")
+@Slf4j
+@Scope("prototype")
 
-public class NIOServer {
-    private final static Logger log = LoggerFactory.getLogger(NIOServer.class);
+public class NIOServer extends Thread{
 
-    private final NioEventLoopGroup acceptGroup;
-    private final Bootstrap bootstrap ;
+    private NioEventLoopGroup acceptGroup;
+    private Bootstrap bootstrap ;
     private  Channel channel=null;
-    private  int port;
 
+    @Setter
+    @Getter
+    private int port;
+
+    @Setter
+    @Getter
+    MyMessageHandler messageHandler;
 
     public void SendPacket(DatagramPacket packet)
     {
@@ -25,8 +38,7 @@ public class NIOServer {
             channel.writeAndFlush(packet);
     }
 
-    public NIOServer(SimpleChannelInboundHandler messageHandler,int port) {
-           this.port = port;
+    public void initNioServer() {
         acceptGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         bootstrap.group(acceptGroup)
@@ -40,22 +52,17 @@ public class NIOServer {
                     });
     }
 
-    public void StartServer()
+    @Override
+    public void run()
     {
         try {
             channel = bootstrap.bind("0.0.0.0",port).sync().channel();
-            log.info ("UdpServer start success" + port);
+            log.info ("UdpServer start at " + port);
             channel.closeFuture().await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             acceptGroup.shutdownGracefully();
         };
-    }
-
-
-    public static void main(String args[]){
-        NIOServer nioServer = new NIOServer(new TestMessageHandle(),12345);
-        nioServer.StartServer();
     }
 }

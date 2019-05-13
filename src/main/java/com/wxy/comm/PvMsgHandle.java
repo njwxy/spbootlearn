@@ -1,18 +1,17 @@
-package com.wxy.pventity;
+package com.wxy.comm;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.wxy.comm.NIOServer;
 import com.wxy.gsonMessage.Result;
+import com.wxy.mqtt.MqttProducer;
+import com.wxy.pventity.*;
 import com.wxy.test.FrameData;
 import com.wxy.ftm.SystemParams;
-import com.wxy.simuGraphDb.Device;
 import com.wxy.simuGraphDb.DeviceService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ import java.util.*;
 import static com.wxy.test.PrjFuncs.*;
 
 @Component
-public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
+public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
     private final static Logger log = LoggerFactory.getLogger(PvMsgHandle.class);
     private final static short MS_RNODE_DATA = 0x11;
     private final static short MS_RNODE_ACK = 0x91;
@@ -38,8 +37,13 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
     public ArrayList<GateWay> gateWayArrayList;
     private ChannelHandlerContext localCtx=null;
    // private  UdpServer udpServer;
-    private WebServerMessageHandle webServerMessageHandle=null;
-    private NIOServer webNioServer;
+    //private WebServerMessageHandle webServerMessageHandle=null;
+    //private NIOServer webNioServer;
+    @Autowired
+    PvWebServerMessageHandle pvWebServerMessageHandle;
+
+    @Autowired
+    MqttProducer mqttProducer;
 
     @Autowired
     private DeviceService deviceService;
@@ -51,9 +55,6 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
 
     @Autowired
     SystemParams systemParams;
-
-
-
 
     public PvMsgHandle() {
         gateWayArrayList = new ArrayList<GateWay>();
@@ -71,10 +72,6 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
         return  null;
     }
 
-
-   // public void setDeviceService(DeviceService deviceService) {
-    //    this.deviceService = deviceService;
-    //}
 
 
     public GateWay getGateWay(long gwAddr){
@@ -144,7 +141,6 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
                     return "node: "+rs.devAddr+ " in "+ gateWay.devAddr + "not found";
                 }
             }
-
          return  "set relay ok";
     }
 
@@ -152,20 +148,6 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
 
     protected void messageReceived(ChannelHandlerContext ctx, DatagramPacket msga) throws Exception {
 
-        if(webServerMessageHandle==null)
-        {
-            webServerMessageHandle = new WebServerMessageHandle(this);
-            webNioServer = new NIOServer(webServerMessageHandle,systemParams.getWebListenPort());
-            new Thread(()->webNioServer.StartServer()).start();
-        }
-        /*
-
-        if(udpServer==null)
-        {
-            udpServer = new UdpServer(systemParams.getWebListenPort(),new WebServerMessageHandle(this));
-            Thread threadUdp = new Thread(udpServer);
-            threadUdp.start();
-        }*/
 
         localCtx = ctx;
         final ByteBuf buf =  msga.content();
@@ -204,8 +186,9 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
             byte[] boutstr = outstr.getBytes();
           //   DatagramPacket packet = new DatagramPacket(boutstr, boutstr.length, ));
             DatagramPacket packet = new DatagramPacket(Unpooled.wrappedBuffer(boutstr) ,new InetSocketAddress(systemParams.getWebServerIp(), systemParams.getWebServerPort()));
-            if(webNioServer!=null)
-                webNioServer.SendPacket(packet);
+
+            if(pvWebServerMessageHandle.nioServer!=null)
+                pvWebServerMessageHandle.nioServer.SendPacket(packet);
             //webServerMessageHandle.sendPacket(packet);
 
             //udpServer.sendPacket(packet);
@@ -325,17 +308,14 @@ public class PvMsgHandle extends SimpleChannelInboundHandler<DatagramPacket> {
                     //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
                     byte[] sendPacket = jsonstr.getBytes();
 
-                    DatagramPacket packet  = new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort()));
-                    if(webNioServer!=null)
-                        webNioServer.SendPacket(packet);
-                    //InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1",12333);
-                    //ctx.writeAndFlush();
-                   // PvNode[] array = new Gson().fromJson(jsonstr,PvNode[].class);
-                   // List<PvNode> list = Arrays.asList(array);
-                    //list.stream().forEach(pvNode ->{
-                     //   System.out.println(pvNode.toString());
-                    //});
-               }
+                    DatagramPacket packet  = new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),
+                            new InetSocketAddress(systemParams.getWebServerIp(),systemParams.getWebServerPort()));
+                    if(pvWebServerMessageHandle.nioServer!=null)
+                        pvWebServerMessageHandle.nioServer.SendPacket(packet);
+
+                    if(mqttProducer !=null)
+                        mqttProducer.sendMessage(jsonstr);
+                }
             }
             break;
 

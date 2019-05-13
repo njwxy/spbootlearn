@@ -1,5 +1,6 @@
 package com.wxy.EnergyEntity;
 
+import com.wxy.comm.MyMessageHandler;
 import com.wxy.test.FrameData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,6 +10,7 @@ import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 import java.util.Date;
@@ -17,7 +19,8 @@ import java.util.Hashtable;
 import static com.wxy.test.PrjFuncs.Hex2Str;
 import static com.wxy.test.PrjFuncs.getSendPacket;
 
-public class EnergyMsgHandle  extends SimpleChannelInboundHandler<DatagramPacket> {
+@Component
+public class EnergyMsgHandle  extends MyMessageHandler<DatagramPacket> {
     private final static Logger log = LoggerFactory.getLogger(EnergyMsgHandle.class);
     private final static short MS_SET_HEART_TIME = 0x23;
     private final static short MS_SET_HEART_TIME_ACK = 0xA3; //

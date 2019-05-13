@@ -17,9 +17,6 @@ public class Result<T> {
         this.isList = isList;
         this.ftmId = ftmId;
     }
-
-
-
 }
 
 

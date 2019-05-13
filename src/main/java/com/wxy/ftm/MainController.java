@@ -2,7 +2,7 @@ package com.wxy.ftm;
 
 
 import com.wxy.pventity.GateWay;
-import com.wxy.pventity.PvMsgHandle;
+import com.wxy.comm.PvMsgHandle;
 import com.wxy.pventity.PvNode;
 import com.wxy.pventity.RelayState;
 import com.wxy.simuGraphDb.*;

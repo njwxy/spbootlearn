@@ -1,4 +1,4 @@
-package com.wxy.pventity;
+package com.wxy.comm;
 
 
 import com.google.gson.Gson;
@@ -7,23 +7,30 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.wxy.gsonMessage.Result;
+import com.wxy.pventity.GateWay;
+import com.wxy.pventity.PvNode;
+import com.wxy.pventity.RelayState;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-public class WebServerMessageHandle extends SimpleChannelInboundHandler<DatagramPacket> {
-    private final static Logger log = LoggerFactory.getLogger(WebServerMessageHandle.class);
+@Slf4j
+@Component
+public class PvWebServerMessageHandle extends MyMessageHandler<DatagramPacket> {
+
     private PvMsgHandle pvMsgHandle=null;
     private ChannelHandlerContext localCtx=null;
 
-    public WebServerMessageHandle(PvMsgHandle pvMsgHandle) {
+    public PvWebServerMessageHandle(PvMsgHandle pvMsgHandle) {
         this.pvMsgHandle = pvMsgHandle;
     }
     public void sendPacket(DatagramPacket packet)

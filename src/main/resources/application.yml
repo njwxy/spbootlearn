@@ -23,3 +23,6 @@ systemparam:
   webListenPort: 12344
   ftmId: 1 #前置机ID号
 
+mqtt:
+  url: tcp://10.1.3.249:1883   #服务器地址
+  topic: pvrpt
