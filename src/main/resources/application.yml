@@ -16,7 +16,7 @@ spring:
     username: pvtest
     password: 123
 systemparam:
-  web-server-ip: "10.1.3.35"
+  web-server-ip: "192.168.2.1"
   web-server-port: 12333
   front-server-port: 12388
   polling-interval: 1
