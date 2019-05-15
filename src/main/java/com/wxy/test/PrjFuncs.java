@@ -37,13 +37,13 @@ public class PrjFuncs {
         byte [] retTime = new byte[6];
         short yy, mm, dd, hh, mi, ss;
 
-        retTime[5]  = (byte)(datatime.getYear()-100);
-        retTime[4]  = (byte)(datatime.getMonth()+1);
-        retTime[3]  = (byte)datatime.getDate();
+        retTime[0]  = (byte)(datatime.getYear()-100);
+        retTime[1]  = (byte)(datatime.getMonth()+1);
+        retTime[2]  = (byte)datatime.getDate();
 
-        retTime[2]  = (byte)(datatime.getHours());
-        retTime[1]  = (byte)(datatime.getMinutes());
-        retTime[0]  = (byte)(datatime.getSeconds());
+        retTime[3]  = (byte)(datatime.getHours());
+        retTime[4]  = (byte)(datatime.getMinutes());
+        retTime[5]  = (byte)(datatime.getSeconds());
         return retTime;
     }
 

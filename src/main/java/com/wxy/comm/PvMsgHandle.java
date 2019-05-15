@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.wxy.test.PrjFuncs.*;
 import static com.wxy.test.PrjFuncs.Hex2Str;
@@ -154,6 +155,9 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
         final ByteBuf buf =  msga.content();
         byte [] msg= new byte[buf.readableBytes()];
         buf.readBytes(msg);
+
+        System.out.println(Hex2Str(msg,msg.length));
+
         FrameData frameData= new FrameData();
         frameData.getByteBuffer().put(msg,0,frameData.size());
         if (         ( frameData.start.get() != (byte) 0x68)
@@ -218,10 +222,19 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                         heartAck.nodeNum.set(nodeNum);
                         //List <Long> listlong = new ArrayList<Long>();
                         //listlong = lstDevice.stream().map(e->{return  e.getDevAddr();}).collect(Collectors.toList());
+                        List<Long> listnode = new ArrayList<Long>();
                         int pos=0;
                         for(Map.Entry<Long,PvNode> entry:gateWay.nodeList.entrySet() ){
                             long nodeAddr = entry.getKey();
-                            heartAck.nodeAddr[pos++].set(nodeAddr);
+                            listnode.add(nodeAddr);
+                            //heartAck.nodeAddr[pos++].set(nodeAddr);
+                        }
+                        List<Long> listSorted = listnode.stream().sorted().collect(Collectors.toList());
+
+                        pos =0;
+                        for (long d:listSorted
+                             ) {
+                            heartAck.nodeAddr[pos++].set(d);
                         }
 
                         int datalen = heartAck.getPacketLength();
@@ -229,7 +242,7 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                         heartAck.getByteBuffer().get(appData);
                         byte[] sendPacket= getSendPacket(frameHead,appData,datalen);
                         if(ctx!=null){
-                            System.out.println( Hex2Str(sendPacket,sendPacket.length));
+                            log.info("send MS_HEART_ACK:"+Hex2Str(sendPacket,sendPacket.length));
                             ctx.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(sendPacket) ,gateWay.getClientIpAddr()));
                         }
                     }

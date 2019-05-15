@@ -16,7 +16,7 @@ public class HeartAck extends Struct {
     public final Unsigned8 pollingInterval = new Unsigned8();
     public final Unsigned8 nodetype= new Unsigned8();
     public final Unsigned8 nodeNum = new Unsigned8();
-    public final Unsigned32[] nodeAddr = array(new Unsigned32[100]); //max 100
+    public final Unsigned32[] nodeAddr = array(new Unsigned32[250]); //max 100
 
     public int getPacketLength()
     {
