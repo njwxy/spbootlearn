@@ -1,6 +1,7 @@
 package com.wxy.ftm;
 
 
+import com.wxy.comm.ApplicationContextProvider;
 import com.wxy.comm.NIOServer;
 import com.wxy.comm.PvMsgHandle;
 import com.wxy.mqtt.MqttProducer;
@@ -24,8 +25,14 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 @Slf4j
 public class PvFront {
     private static ApplicationContext applicationContext;
+  //  @Autowired
+   // ApplicationContextProvider applicationContextProvider;
+
     public static void main(String[] args){
       applicationContext =  SpringApplication.run(PvFront.class,args);
+     ApplicationContextProvider applicationContextProvider
+             = applicationContext.getBean(ApplicationContextProvider.class);
+      applicationContextProvider.setApplicationContext(applicationContext);
        // MqttProducer.setApplicationContext(applicationContext);
     }
    /* @Autowired

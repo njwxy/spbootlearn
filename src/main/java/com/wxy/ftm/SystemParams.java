@@ -22,7 +22,4 @@ public class SystemParams {
     private int frontServerPort; /* 前置机通信端口 */
     private int webListenPort; /*  服务器消息监听端口 */
     private long fmtId;        /* 前置机id 号 */
-
-
-
 }

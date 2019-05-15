@@ -1,5 +1,6 @@
 package com.wxy.comm;
 
+import com.wxy.ftm.SystemParams;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -14,6 +15,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     public static <T> T getBean(String name,Class<T> aClass){
+        System.out.println("context is "+context);
         return context.getBean(name,aClass);
     }
 

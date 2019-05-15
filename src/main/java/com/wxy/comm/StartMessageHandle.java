@@ -22,6 +22,7 @@ public class StartMessageHandle {
 
 
     void startNioFunc(MyMessageHandler messageHandler,int port){
+
         NIOServer nioServer = ApplicationContextProvider.getBean("nioserver",NIOServer.class);
         messageHandler.setNioServer(nioServer);
         nioServer.setMessageHandler(messageHandler);
