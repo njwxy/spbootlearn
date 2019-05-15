@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 
 import static com.wxy.test.PrjFuncs.*;
+import static com.wxy.test.PrjFuncs.Hex2Str;
 
 @Component
 public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
@@ -200,15 +201,18 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
         {
             case MS_HEART_REQ:
             {
+                log.info("recv MS_HEART_REQ:"+Hex2Str(msg,msg.length));
                 byte needRpt= msg[frameData.size()];
                 FrameData frameHead = new FrameData(MS_HEART_ACK,gwAddr);
                 if(needRpt == 1)
                 {
+                    gateWay.pollingInterval = 0;
+
                     if(gateWay.nodeLoad==false) {
                         break;
                     }
                     short nodeNum = (short)gateWay.nodeList.size();
-                    if(nodeNum<100 && nodeNum>0){
+                    if(nodeNum<=250 && nodeNum>0){
 
                         HeartAck heartAck = new HeartAck((short)gateWay.heartInterval,(short)gateWay.pollingInterval);
                         heartAck.nodeNum.set(nodeNum);
@@ -234,6 +238,8 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                 if(needRpt ==0){
                     /* time6, heartInterval 1 pollingInterval;
                     * */
+                    gateWay.pollingInterval = 0;
+
                     byte [] appData = new byte[8];
                     byte[] timenow = getTimeByteArray(new Date());
                     for(int i=0;i<6;i++)
@@ -270,6 +276,7 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
 
             case MS_RPT_DATA:{
                 /*num+ num*NodeRptData*/
+                log.info("recv MS_RPT_DATA:"+Hex2Str(msg,msg.length));
                 int appPos = frameData.size();
                 short itemnum = msg[appPos];
                 //log.info(Hex2Str(msg,msg.length));
