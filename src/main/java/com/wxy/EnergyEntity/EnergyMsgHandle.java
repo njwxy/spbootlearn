@@ -1,6 +1,12 @@
 package com.wxy.EnergyEntity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wxy.comm.MyMessageHandler;
+import com.wxy.comm.PvWebServerMessageHandle;
+import com.wxy.ftm.SystemParams;
+import com.wxy.gsonMessage.Result;
+import com.wxy.pventity.PvNode;
 import com.wxy.test.FrameData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
 import static com.wxy.test.PrjFuncs.Hex2Str;
 import static com.wxy.test.PrjFuncs.getSendPacket;
@@ -37,7 +44,13 @@ public class EnergyMsgHandle  extends MyMessageHandler<DatagramPacket> {
     public Hashtable<Long,EnergyNode> nodeList;
 
     @Autowired
+    EnergyMsgHandle energyMsgHandle;
+
+    @Autowired
     ENodeService nodeService;
+
+    @Autowired
+    SystemParams systemParams;
 
     public EnergyMsgHandle() {
         nodeList = new Hashtable<Long,EnergyNode>(8192); /* max 4K items support now */
@@ -125,6 +138,23 @@ public class EnergyMsgHandle  extends MyMessageHandler<DatagramPacket> {
                             nrd.getEnergy(0),nrd.getEnergy(1),nrd.getEnergy(2),nrd.getEnergy(3),
                             nrd.enodeState(),nrd.getRelayState(), new Date());
                     nodeService.createPvNode(energyNode);
+
+                    Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
+                    //Gson gson = new GsonBuilder().create();
+
+                    Result<EnergyNode> result = new Result<EnergyNode>(EnergyNode.class.getSimpleName(),true,1);
+                    result.data = energyNode;
+
+
+                    String jsonstr = gson.toJson(result);
+                    log.info(jsonstr);
+                    //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
+                    byte[] sendPacket = jsonstr.getBytes();
+
+                    DatagramPacket packet  = new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),
+                            new InetSocketAddress(systemParams.getEnergyWebServerIp(),systemParams.getEnergyWebServerPort()));
+                    if(energyMsgHandle.nioServer!=null)
+                        energyMsgHandle.nioServer.SendPacket(packet);
                 }
                 break;
             default:

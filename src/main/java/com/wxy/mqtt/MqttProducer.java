@@ -1,13 +1,9 @@
 package com.wxy.mqtt;
 
-import com.wxy.comm.ApplicationContextProvider;
-import com.wxy.comm.NIOServer;
+import com.wxy.ftm.ApplicationContextProvider;
 import com.wxy.ftm.MosConfig;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.annotation.MessagingGateway;

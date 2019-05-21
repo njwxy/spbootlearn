@@ -1,4 +1,4 @@
-package com.wxy.comm;
+package com.wxy.ftm;
 
 import com.wxy.ftm.SystemParams;
 import org.springframework.beans.BeansException;
@@ -11,6 +11,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext context;
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        System.out.println("applicationContext正在初始化,application:"+applicationContext);
         context = applicationContext;
     }
 
