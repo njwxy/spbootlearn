@@ -65,7 +65,7 @@ public class EnergyWebMsgHandle extends MyMessageHandler<DatagramPacket> {
 
         Gson gson = new GsonBuilder().create();
 
-        if(retype.equals("energyRelay"))
+        if(retype.equals("EnergyRelayState"))
         {
                 Type userListType = new TypeToken<Result<EnergyRelayState>>(){}.getType();
                 Result<EnergyRelayState> userListResult = gson.fromJson(msg,userListType);

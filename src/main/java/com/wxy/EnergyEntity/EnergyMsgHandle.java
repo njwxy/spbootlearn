@@ -124,6 +124,28 @@ public class EnergyMsgHandle  extends MyMessageHandler<DatagramPacket> {
 
                 }
                 break;
+            case MS_REMT_CTRL_RELAY_ACK: {
+                int appPos = frameData.size();
+                byte state = msg[appPos+1];
+                EnergyRelayState energyRelayState = new EnergyRelayState(devAddr,state);
+    /*           Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
+                Result<EnergyRelayState> result = new Result<EnergyRelayState>(EnergyRelayState.class.getSimpleName(),false,systemParams.getFmtId());
+                result.data = energyRelayState;
+                String jsonstr = gson.toJson(result);
+             */
+                String jsonstr = new Result<EnergyRelayState>(EnergyRelayState.class.getSimpleName(),false,systemParams.getFmtId(),energyRelayState).GetGsonString();
+                log.info("recv CTRL_RELAY_ACK: "+ jsonstr);
+                //System.out.println("send message to "+systemParams.getWebServerIp()+":"+systemParams.getWebServerPort());
+                byte[] sendPacket = jsonstr.getBytes();
+                DatagramPacket packet  = new DatagramPacket(Unpooled.wrappedBuffer(sendPacket),
+                        new InetSocketAddress(systemParams.getEnergyWebServerIp(),systemParams.getEnergyWebServerPort()));
+                if(energyMsgHandle.nioServer!=null)
+                    energyMsgHandle.nioServer.SendPacket(packet);
+
+
+                break;
+            }
+
             case MS_QUERY_ENG_DATA_ACK:
                 {
                     int appPos = frameData.size();
@@ -142,9 +164,8 @@ public class EnergyMsgHandle  extends MyMessageHandler<DatagramPacket> {
                     Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
                     //Gson gson = new GsonBuilder().create();
 
-                    Result<EnergyNode> result = new Result<EnergyNode>(EnergyNode.class.getSimpleName(),true,1);
+                    Result<EnergyNode> result = new Result<EnergyNode>(EnergyNode.class.getSimpleName(),false,systemParams.getFmtId());
                     result.data = energyNode;
-
 
                     String jsonstr = gson.toJson(result);
                     log.info(jsonstr);

@@ -18,6 +18,18 @@ public class Result<T> {
         this.ftmId = ftmId;
     }
 
+    public Result(String type, boolean isList, long ftmId, T data) {
+        this.type = type;
+        this.isList = isList;
+        this.ftmId = ftmId;
+        this.data = data;
+    }
+
+    public <T>  String GetGsonString(){
+        Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd HH:mm:ss").create();
+        String jsonstr = gson.toJson(this);
+        return jsonstr;
+    }
 
 
 }
