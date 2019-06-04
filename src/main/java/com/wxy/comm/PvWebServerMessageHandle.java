@@ -17,6 +17,7 @@ import io.netty.channel.socket.DatagramPacket;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -27,12 +28,18 @@ import java.util.List;
 @Component
 public class PvWebServerMessageHandle extends MyMessageHandler<DatagramPacket> {
 
-    private PvMsgHandle pvMsgHandle=null;
+
+    //private PvMsgHandle pvMsgHandle=null;
+    @Autowired
+    PvMsgHandle pvMsgHandle;
+
     private ChannelHandlerContext localCtx=null;
 
-    public PvWebServerMessageHandle(PvMsgHandle pvMsgHandle) {
-        this.pvMsgHandle = pvMsgHandle;
-    }
+//    public PvWebServerMessageHandle(PvMsgHandle pvMsgHandle) {
+//        this.pvMsgHandle = pvMsgHandle;
+ //   }
+
+
     public void sendPacket(DatagramPacket packet)
     {
         if(localCtx!=null)
