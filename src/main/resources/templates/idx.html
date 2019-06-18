@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+ <title>Energy System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.bootcss.com/paho-mqtt/1.0.2/mqttws31.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>  
+  <link href="https://cdn.bootcss.com/font-awesome/5.8.1/css/fontawesome.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+  <script type="text/javascript">
+    var mqtt;
+    var reconnectTimeout = 2000;
+    host = '192.168.2.1';	// hostname or IP address
+	port = 9001
+	topic = 'pvrpt';		// topic to subscribe to
+	useTLS = false;
+	username = null;
+	password = null;
+	cleansession = true;
+
+
+    function MQTTconnect() {
+	if (typeof path == "undefined") {
+		path = '/mqtt';
+	}
+	mqtt = new Paho.MQTT.Client(
+			host,
+			port,
+			path,
+			"web_" + parseInt(Math.random() * 100, 10)
+	);
+        var options = {
+            timeout: 3,
+            useSSL: useTLS,
+            cleanSession: cleansession,
+            onSuccess: onConnect,
+            onFailure: function (message) {
+                $('#status').val("Connection failed: " + message.errorMessage + "Retrying");
+                setTimeout(MQTTconnect, reconnectTimeout);
+            }
+        };
+
+        mqtt.onConnectionLost = onConnectionLost;
+        mqtt.onMessageArrived = onMessageArrived;
+
+        if (username != null) {
+            options.userName = username;
+            options.password = password;
+        }
+        console.log("Host="+ host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
+        mqtt.connect(options);
+    }
+
+    function onConnect() {
+        $('#status').val('Connected to ' + host + ':' + port + path);
+        // Connection succeeded; subscribe to our topic
+        mqtt.subscribe(topic, {qos: 0});
+        $('#topic').val(topic);
+    }
+
+    function onConnectionLost(response) {
+        setTimeout(MQTTconnect, reconnectTimeout);
+        $('#status').val("connection lost: " + responseObject.errorMessage + ". Reconnecting");
+
+    };
+
+    function onMessageArrived(message) {
+        document.getElementById("show").innerHTML ="";
+        document.getElementById("thead").innerHTML="";
+        document.getElementById("tbody").innerHTML="";
+        var topic = message.destinationName;
+        var payload = message.payloadString;
+          //对json进行处理
+        var obj = eval('(' + payload + ')');
+         //使用遍历查看json数据中的内容
+        for (var prop in obj)
+         {     
+              
+              if(prop=='data')
+              {  
+                for(var i in obj.data[0])
+                {
+                     document.getElementById("thead").innerHTML = document.getElementById("thead").innerHTML+"<th>"+i+"</th>";
+                }
+                for(var i in obj.data)
+                {   
+                  var str="";
+                   for(var j in obj.data[i])
+                     { 
+                        str=str+"<td>"+obj.data[i][j]+"</td>";
+                     }
+                    document.getElementById("tbody").innerHTML = document.getElementById("tbody").innerHTML+"<tr>"+str+"</tr>";
+                 }
+              }
+              else 
+              {
+                  document.getElementById("show").innerHTML = document.getElementById("show").innerHTML+prop+" : "+obj[prop]+"<br>";
+              }
+         }
+      /* $('#ws').('<li>' + topic + ' = ' + payload + '</li>'); */	
+    };
+
+
+	function onPubClick(){
+		var topic = $('#pub-topic-text')[0].value;
+		console.log("pub topic is"+topic);
+		var payload = $('#payload-text')[0].value;
+		message = new Paho.MQTT.Message(payload);
+		message.destinationName = topic;
+		mqtt.send(message); 
+	}
+	
+	
+    $(document).ready(function() {
+        MQTTconnect();
+    });
+
+    </script>
+  </head>
+  <body>
+    <h1>PV SYSTEM OF HUADIAN</h1>
+    <!--div id="publish">
+		<h2>Publish</h2>
+		<p>Topic: <input class="txt" id="pub-topic-text" type="text" value=""></p>
+		<p>Payload: <input class="txt" id="payload-text" type="text"  value=""></p>
+		<button text="publish" id="publish-button" onclick="onPubClick()"> publish </button>		
+	</div-->
+	<div>
+        <div>Subscribed to <input type='text' id='topic' disabled />
+        Status: <input type='text' id='status' size="80" disabled /></div>
+        <div id="show"></div>
+        <ul id='ws' style="font-family: 'Courier New', Courier, monospace;"></ul>
+       
+        <div class="py-1" >
+    <div class="container-fluid">
+      <div class="row">
+      <div class="col-md-12" id="show"></div>
+        <div class="col-md-12">
+         
+          <div class="table-responsive">
+            <table class="table table-bordered ">
+              <thead class="thead-dark">
+                <tr id="thead">
+                  
+                </tr>
+              </thead>
+              <tbody id="tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </body>
+</html>
