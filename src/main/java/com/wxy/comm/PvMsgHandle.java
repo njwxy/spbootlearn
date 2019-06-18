@@ -222,20 +222,22 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                         heartAck.nodeNum.set(nodeNum);
                         //List <Long> listlong = new ArrayList<Long>();
                         //listlong = lstDevice.stream().map(e->{return  e.getDevAddr();}).collect(Collectors.toList());
-                        List<Long> listnode = new ArrayList<Long>();
+                       // List<Long> listnode = new ArrayList<Long>();
                         int pos=0;
+
                         for(Map.Entry<Long,PvNode> entry:gateWay.nodeList.entrySet() ){
                             long nodeAddr = entry.getKey();
-                            listnode.add(nodeAddr);
-                            //heartAck.nodeAddr[pos++].set(nodeAddr);
+                            //listnode.add(nodeAddr);
+                            pos++;
+                            heartAck.nodeAddr[nodeNum-pos].set(nodeAddr);
                         }
-                        List<Long> listSorted = listnode.stream().sorted().collect(Collectors.toList());
+                        //List<Long> listSorted = listnode.stream().sorted().collect(Collectors.toList());
 
-                        pos =0;
+                        /*pos =0;
                         for (long d:listSorted
                              ) {
                             heartAck.nodeAddr[pos++].set(d);
-                        }
+                        }*/
 
                         int datalen = heartAck.getPacketLength();
                         byte [] appData = new byte[datalen];
@@ -253,7 +255,7 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                     * */
                     gateWay.pollingInterval = 0;
 
-                    byte [] appData = new byte[8];
+                    byte [] appData = new byte[9];
                     byte[] timenow = getTimeByteArray(new Date());
                     for(int i=0;i<6;i++)
                     {
@@ -261,6 +263,7 @@ public class PvMsgHandle extends MyMessageHandler<DatagramPacket> {
                     }
                     appData[6] = (byte) gateWay.heartInterval;
                     appData[7] =(byte) gateWay.pollingInterval;
+                    appData[8] = (byte) 0;
                     byte[] sendPacket = getSendPacket(frameHead,appData,appData.length);
                     if(ctx!=null){
                         log.info("send MS_HEART_ACK:"+Hex2Str(sendPacket,sendPacket.length));
