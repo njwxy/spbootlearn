@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        var search = document.getElementById("search");
+        search.onkeyup = function(){
+            console.log(search.value)
+        }
+        search.onkeypress = function(){
+            console.log(search.value)
+        }
+        search.onkeydown = function(){
+            console.log(search.value)
+        }
+    </script>
+
+</head>
+<body>
+    <input type="text" name="search" id="search" placeholder="请输入搜索内容"></body>
+</html>
